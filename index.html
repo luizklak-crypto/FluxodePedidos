@@ -779,7 +779,7 @@ td small{
         <div class="panel table-panel">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Pedido</th><th>Cliente</th><th>Previsão</th><th>Itens</th><th>Tipo</th><th>Situação</th><th>Data Atitude</th><th></th></tr></thead>
+              <thead><tr><th>Pedido</th><th>Cliente</th><th>Previsão</th><th>Itens</th><th>Tipo</th><th>Situação</th><th>Data Atitude</th></tr></thead>
               <tbody id="ordersTable"></tbody>
             </table>
           </div>
@@ -1179,7 +1179,7 @@ function renderDashboardLists(){
   const recent=[...state.history].sort((a,b)=>String(b.dataHora).localeCompare(String(a.dataHora))).slice(0,5);
   $("#upcomingList").innerHTML=recent.length?recent.map(h=>`<div class="list-item"><div><strong>${h.pedido} · ${h.acao||"Acompanhamento atualizado"}</strong><span>${fmtDateTime(h.dataHora)}</span></div>${badge(h.statusNovo||"Sem acompanhamento")}</div>`).join(""):`<div class="empty">Nenhuma movimentação logística registrada.</div>`;
   const attention=getGroupedOrders().filter(o=>!o.status||norm(o.status)==="sem acompanhamento").slice(0,5);
-  $("#attentionList").innerHTML=attention.length?attention.map(o=>`<div class="list-item"><div><strong>${o.pedido} · ${o.cliente}</strong><span>Previsão ${fmtDate(o.previsao)} · ${o.loja}</span></div><button class="table-action" onclick="openSchedule('${o.pedido}')">Atualizar</button></div>`).join(""):`<div class="empty">Nenhum pedido pendente.</div>`;
+  $("#attentionList").innerHTML=attention.length?attention.map(o=>`<div class="list-item"><div><strong>${String(o.pedido).replace(/,00$/,'').replace(/\.00$/,'')} · ${o.cliente}</strong><span>Previsão ${fmtDate(o.previsao)} · ${o.loja}</span></div><button class="table-action" onclick="openSchedule('${String(o.pedido).replace(/,00$/,'').replace(/\.00$/,'')}')">Atualizar</button></div>`).join(""):`<div class="empty">Nenhum pedido pendente.</div>`;
 }
 function renderFilters(){
   const statuses=(state.statuses.length?state.statuses:[...new Set(getGroupedOrders().map(o=>o.status).filter(Boolean))]).sort();
@@ -1231,9 +1231,9 @@ function renderOrders(){
   });
 
   $("#ordersTable").innerHTML=rows.length?rows.map(o=>`
-    <tr class="order-row" onclick="openSchedule('${o.pedido}')">
+    <tr class="order-row" onclick="openSchedule('${String(o.pedido).replace(/,00$/,'').replace(/\.00$/,'')}')">
       <td>
-        <button class="order-link" type="button" onclick="event.stopPropagation();openSchedule('${o.pedido}')">${o.pedido}</button>
+        <button class="order-link" type="button" onclick="event.stopPropagation();openSchedule('${String(o.pedido).replace(/,00$/,'').replace(/\.00$/,'')}')">${String(o.pedido).replace(/,00$/,'').replace(/\.00$/,'')}</button>
       </td>
       <td>${o.cliente||"—"}<br><small>${o.cidade||""}</small></td>
       <td>${fmtDate(o.previsao)}</td>
@@ -1242,17 +1242,15 @@ function renderOrders(){
         <div class="item-summary">${o.quantidadeItens===1?"produto":"produtos"}</div>
       </td>
       <td>${badge(o.categoria||"Sem categoria")}</td>
-      <td class="quick-edit-cell" data-field="status" data-order="${o.pedido}" onclick="event.stopPropagation();startInlineEdit(this)">
+      <td class="quick-edit-cell" data-field="status" data-order="${String(o.pedido).replace(/,00$/,'').replace(/\.00$/,'')}" onclick="event.stopPropagation();startInlineEdit(this)">
         <span class="inline-edit-trigger" title="Clique para alterar a situação">${badge(o.status||"Sem acompanhamento")}</span>
       </td>
-      <td class="quick-edit-cell" data-field="dataAtitude" data-order="${o.pedido}" onclick="event.stopPropagation();startInlineEdit(this)">
+      <td class="quick-edit-cell" data-field="dataAtitude" data-order="${String(o.pedido).replace(/,00$/,'').replace(/\.00$/,'')}" onclick="event.stopPropagation();startInlineEdit(this)">
         <span class="inline-edit-trigger" title="Clique para alterar a data da atitude">${o.dataAtitude?fmtDate(o.dataAtitude):"—"}</span>
       </td>
-      <td>
-        <button class="table-action" type="button" onclick="event.stopPropagation();openSchedule('${o.pedido}')">Abrir</button>
-      </td>
+
     </tr>
-  `).join(""):`<tr><td colspan="8" class="empty">Nenhum pedido encontrado.</td></tr>`;
+  `).join(""):`<tr><td colspan="7" class="empty">Nenhum pedido encontrado.</td></tr>`;
 }
 function renderAgenda(){
   const chosen=$("#agendaDate").value;
