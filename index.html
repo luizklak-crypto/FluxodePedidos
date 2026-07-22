@@ -3386,6 +3386,7 @@ function getVisibleItems(){
 }
 
 function matchesSupervisorQuickFilter(item){
+  if(!isDashboardCategoryIncluded(item))return false;
   if(!supervisorQuickFilter)return true;
 
   if(supervisorQuickFilter==="overdue"){
@@ -3555,6 +3556,14 @@ function resetOrdersPage(){
 }
 
 
+
+function isDashboardCategoryIncluded(item){
+  const category=canonicalCategory(item.categoria)||"Sem categoria";
+
+  return category!=="Tecido" &&
+    category!=="Protetor de tecido";
+}
+
 function uniqueOrdersFromItems(items){
   const map=new Map();
 
@@ -3613,7 +3622,9 @@ function supervisorMetricCard(label,value,detail,filter,kind=""){
 }
 
 function renderSupervisorDashboard(){
-  const allItems=state.orders||[];
+  const allItems=(state.orders||[]).filter(
+    isDashboardCategoryIncluded
+  );
 
   const items=allItems.filter(item=>{
     const typeMatches=!supervisorDashboardTypeFilter ||
@@ -3965,9 +3976,7 @@ function renderSupervisorDashboard(){
   const categoryOrder=[
     "Agendamento",
     "Previsão",
-    "Pronta Entrega",
-    "Tecido",
-    "Protetor de tecido"
+    "Pronta Entrega"
   ];
 
   const categoryCounts=new Map();
