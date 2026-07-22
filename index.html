@@ -1,0 +1,5620 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f1f33" />
+  <title>ClamiLog | Painel de Gestão Logística</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+<style>
+:root{
+  --navy:#0f1f33;--navy-2:#162b45;--blue:#2563eb;--bg:#f4f7fb;--panel:#fff;
+  --text:#172033;--muted:#6b7280;--line:#e6eaf0;--green:#15803d;--amber:#b45309;
+  --red:#b91c1c;--purple:#7e22ce;--shadow:0 10px 30px rgba(15,31,51,.08)
+}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}.app-shell{min-height:100vh;display:flex}
+.sidebar{width:250px;background:linear-gradient(180deg,var(--navy),#091424);color:#fff;padding:24px 18px;display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:36px}.brand-mark{width:42px;height:42px;border-radius:12px;background:#fff;color:var(--navy);display:grid;place-items:center;font-weight:800}
+.brand strong,.brand span{display:block}.brand span{font-size:12px;color:#aebbd0;margin-top:3px}
+nav{display:grid;gap:8px}.nav-item{border:0;background:transparent;color:#b9c5d8;padding:13px 14px;border-radius:10px;text-align:left;cursor:pointer;font-weight:600}.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.10);color:#fff}
+.sidebar-footer{margin-top:auto}.connection{font-size:12px;display:flex;align-items:center;gap:8px;color:#c7d2e3;margin-bottom:12px}.connection i{width:8px;height:8px;border-radius:50%;background:#f59e0b}.connection.online i{background:#22c55e}
+.main{margin-left:250px;min-width:0;flex:1;padding:28px 34px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}.topbar h1{margin:0 0 5px;font-size:26px}.topbar p,.panel p{margin:0;color:var(--muted);font-size:13px}.top-actions{display:flex;gap:10px}
+button{cursor:pointer}.primary,.secondary,.icon-btn{border-radius:10px;padding:11px 16px;border:1px solid transparent;font-weight:700}.primary{background:var(--blue);color:#fff}.primary:hover{filter:brightness(.95)}.secondary{background:#fff;border-color:var(--line);color:var(--text)}.full{width:100%}.icon-btn{font-size:20px;background:#fff;border-color:var(--line);padding:8px 13px}
+.view{display:none}.view.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}.metric{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}.metric span{color:var(--muted);font-size:13px}.metric strong{font-size:30px;display:block;margin-top:9px}.metric small{font-size:11px;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.panel h2{font-size:16px;margin:0 0 4px}.link-btn{border:0;background:transparent;color:var(--blue);font-weight:700}.stack{display:grid;gap:10px}.list-item{border:1px solid var(--line);border-radius:12px;padding:13px;display:flex;justify-content:space-between;gap:12px;align-items:center}.list-item strong,.list-item span{display:block}.list-item span{font-size:12px;color:var(--muted);margin-top:4px}
+.badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;background:#eef2ff;color:#3730a3;white-space:nowrap}.badge.agendado{background:#dcfce7;color:#166534}.badge.pendente{background:#fef3c7;color:#92400e}.badge.entregue{background:#dbeafe;color:#1e40af}.badge.reagendado{background:#f3e8ff;color:#6b21a8}.badge.cancelado{background:#fee2e2;color:#991b1b}
+.toolbar{display:flex;gap:12px;margin-bottom:16px}.toolbar input,.toolbar select,.agenda-head input,input,select,textarea{border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:#fff;color:var(--text)}.search{flex:1}.table-panel{padding:0;overflow:hidden}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);font-size:13px}th{font-size:11px;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;background:#fafbfc}tr:hover td{background:#fbfdff}.table-action{border:0;background:#edf3ff;color:var(--blue);font-weight:700;border-radius:8px;padding:7px 10px}
+.agenda-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.agenda-grid{display:grid;gap:12px}.agenda-card{background:#fff;border-left:5px solid var(--blue);border-radius:14px;padding:18px;box-shadow:var(--shadow);display:grid;grid-template-columns:110px 1fr auto;gap:18px;align-items:center}.agenda-time strong{font-size:18px}.agenda-card h3{margin:0 0 5px;font-size:15px}.agenda-card p{margin:3px 0;color:var(--muted);font-size:12px}
+.timeline{display:grid;gap:0}.timeline-item{position:relative;padding:2px 0 22px 30px;border-left:2px solid #dce3ef;margin-left:7px}.timeline-item:before{content:"";position:absolute;left:-7px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px #eaf0ff}.timeline-item h3{font-size:14px;margin:0 0 5px}.timeline-item p{margin:3px 0;color:var(--muted);font-size:12px}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(8,18,32,.62);z-index:20;padding:22px;align-items:center;justify-content:center}.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:22px;box-shadow:0 24px 80px rgba(0,0,0,.25)}.modal.large{width:min(820px,100%)}.modal-head{display:flex;justify-content:space-between;margin-bottom:20px}.modal-head h2{margin:0 0 5px}.modal-head p{margin:0;color:var(--muted);font-size:13px}.modal-head button{border:0;background:#f1f4f8;border-radius:9px;width:35px;height:35px;font-size:22px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.form-grid label,label{font-size:12px;font-weight:700;display:grid;gap:7px}.span-2{grid-column:span 2}.order-preview{margin-top:16px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px;font-size:12px;color:var(--muted)}.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}.help{font-size:12px;color:var(--muted);line-height:1.5}
+.toast{position:fixed;right:24px;bottom:24px;background:#111827;color:#fff;padding:13px 17px;border-radius:10px;opacity:0;transform:translateY(15px);pointer-events:none;transition:.25s;z-index:50}.toast.show{opacity:1;transform:none}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+@media(max-width:980px){.cards{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}.sidebar{width:78px}.sidebar .brand div:last-child,.sidebar span,.sidebar-footer{display:none}.main{margin-left:78px}.nav-item{text-align:center}}
+@media(max-width:640px){.main{padding:18px 14px}.topbar{align-items:flex-start}.topbar p{display:none}.top-actions .primary{font-size:0}.top-actions .primary:after{content:"+";font-size:22px}.cards{grid-template-columns:1fr 1fr;gap:10px}.metric{padding:14px}.metric strong{font-size:23px}.toolbar{flex-direction:column}.form-grid{grid-template-columns:1fr}.span-2{grid-column:span 1}.agenda-card{grid-template-columns:1fr}.sidebar{width:62px;padding:18px 8px}.main{margin-left:62px}.brand-mark{width:40px}.grid-2{gap:12px}}
+
+
+.order-row{cursor:pointer}.order-row:hover td{background:#f5f8ff}
+.order-link{border:0;background:transparent;color:var(--navy);font-weight:800;padding:0;cursor:pointer}
+.order-link:hover{color:var(--blue);text-decoration:underline}
+.item-summary{font-size:12px;color:var(--muted);margin-top:4px}
+.items-box{margin-top:16px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.items-box h3{font-size:13px;margin:0;padding:12px 14px;background:#f8fafc;border-bottom:1px solid var(--line)}
+.items-table{width:100%;border-collapse:collapse}
+.items-table th,.items-table td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--line)}
+.items-table tr:last-child td{border-bottom:0}
+.order-data-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.order-data-card{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px}
+.order-data-card span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.order-data-card strong{font-size:13px}
+@media(max-width:640px){.order-data-grid{grid-template-columns:1fr}.items-table{min-width:650px}}
+
+.sync-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:rgba(8,18,32,.72);
+  backdrop-filter:blur(5px);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.sync-overlay.open{display:flex}
+.sync-card{
+  width:min(460px,100%);
+  background:#fff;
+  border-radius:22px;
+  padding:30px;
+  box-shadow:0 28px 90px rgba(0,0,0,.32);
+  text-align:center;
+}
+.sync-logo{
+  width:58px;
+  height:58px;
+  border-radius:16px;
+  margin:0 auto 18px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  color:#fff;
+  font-weight:800;
+  font-size:18px;
+}
+.sync-card h2{margin:0 0 8px;font-size:21px}
+.sync-card>p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+.sync-spinner{
+  width:44px;
+  height:44px;
+  margin:22px auto 18px;
+  border:4px solid #e7edf7;
+  border-top-color:var(--blue);
+  border-radius:50%;
+  animation:syncSpin .8s linear infinite;
+}
+@keyframes syncSpin{to{transform:rotate(360deg)}}
+.sync-progress{
+  height:8px;
+  background:#e9eef7;
+  border-radius:999px;
+  overflow:hidden;
+  margin:18px 0 20px;
+}
+.sync-progress-bar{
+  height:100%;
+  width:12%;
+  background:linear-gradient(90deg,var(--blue),#60a5fa);
+  border-radius:999px;
+  transition:width .45s ease;
+}
+.sync-steps{
+  text-align:left;
+  display:grid;
+  gap:10px;
+  margin-top:4px;
+}
+.sync-step{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:var(--muted);
+  font-size:13px;
+}
+.sync-step .step-icon{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#eef2f7;
+  color:#8a96a8;
+  font-size:11px;
+  font-weight:800;
+  flex:0 0 auto;
+}
+.sync-step.active{color:var(--text);font-weight:700}
+.sync-step.active .step-icon{background:#dbeafe;color:#1d4ed8}
+.sync-step.done{color:var(--green);font-weight:700}
+.sync-step.done .step-icon{background:#dcfce7;color:#166534}
+.sync-note{
+  margin-top:20px!important;
+  font-size:11px!important;
+  color:#8a94a6!important;
+}
+.sync-success .sync-spinner{display:none}
+.sync-success .sync-logo{background:#16a34a}
+.sync-success .sync-progress-bar{width:100%!important;background:#16a34a}
+.sync-success h2{color:#166534}
+button:disabled{cursor:not-allowed;opacity:.65}
+.refresh-spinning{animation:syncSpin .8s linear infinite}
+
+.category-nav{
+  display:grid;
+  gap:6px;
+  margin:2px 0 8px 12px;
+  padding-left:12px;
+  border-left:1px solid rgba(255,255,255,.14);
+}
+.category-nav-label{
+  color:#71819a;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  padding:7px 10px 4px;
+}
+.category-nav-item{
+  border:0;
+  background:transparent;
+  color:#9eacc2;
+  padding:10px 12px;
+  border-radius:9px;
+  text-align:left;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:600;
+  transition:.2s;
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.category-nav-item:hover{
+  background:rgba(255,255,255,.07);
+  color:#fff;
+}
+.category-nav-item.active{
+  background:rgba(37,99,235,.24);
+  color:#fff;
+  box-shadow:inset 3px 0 0 #60a5fa;
+}
+.category-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#8090a8;
+  flex:0 0 auto;
+}
+.category-nav-item[data-category="Agendamento"] .category-dot{background:#22c55e}
+.category-nav-item[data-category="Previsão"] .category-dot{background:#f59e0b}
+.category-nav-item[data-category="Pronta Entrega"] .category-dot{background:#3b82f6}
+.category-nav-item[data-category="Tecido"] .category-dot{background:#a855f7}
+.category-nav-item[data-category="Protetor de tecido"] .category-dot{background:#ec4899}
+@media(max-width:980px){
+  .category-nav{margin-left:0;padding-left:0;border-left:0}
+  .category-nav-label{display:none}
+  .category-nav-item{
+    justify-content:center;
+    padding:10px 5px;
+    font-size:0;
+  }
+  .category-nav-item .category-dot{
+    width:10px;
+    height:10px;
+  }
+}
+
+.inline-edit{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-width:150px;
+}
+.inline-edit-trigger{
+  cursor:pointer;
+  transition:.18s ease;
+}
+.inline-edit-trigger:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(37,99,235,.14);
+}
+.inline-select,.inline-date{
+  height:34px;
+  border:1px solid #cfd8e6;
+  border-radius:9px;
+  padding:0 9px;
+  background:#fff;
+  color:var(--text);
+  font:inherit;
+  font-size:12px;
+  outline:none;
+}
+.inline-select{width:190px;max-width:190px}
+.inline-date{width:138px}
+.inline-select:focus,.inline-date:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+.inline-save,.inline-cancel{
+  width:30px;height:30px;border:0;border-radius:8px;
+  cursor:pointer;font-weight:800;
+}
+.inline-save{background:#dcfce7;color:#166534}
+.inline-cancel{background:#f1f5f9;color:#475569}
+.inline-saving{opacity:.55;pointer-events:none}
+
+/* =========================================================
+   CLAMILOG — TEMA EDITORIAL INSPIRADO NA IDENTIDADE CLAMI
+   Alteração exclusivamente visual
+   ========================================================= */
+
+:root{
+  --navy:#171714;
+  --blue:#171714;
+  --blue-soft:#ece9e2;
+  --green:#6f7c64;
+  --red:#9a625b;
+  --text:#1c1b18;
+  --muted:#77736b;
+  --line:#dedbd3;
+  --bg:#f4f2ed;
+  --panel:#fbfaf7;
+  --white:#ffffff;
+  --sand:#d8cdbb;
+  --sand-soft:#eee9df;
+  --warm:#a58d72;
+  --shadow:0 14px 40px rgba(38,34,28,.08);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  letter-spacing:.01em;
+}
+
+.sidebar{
+  background:#151512;
+  border-right:1px solid rgba(255,255,255,.08);
+  box-shadow:none;
+}
+
+.brand{
+  padding:30px 22px 25px;
+  border-bottom:1px solid rgba(255,255,255,.10);
+}
+
+.brand-logo{
+  width:44px;
+  height:44px;
+  border-radius:0;
+  background:#f5f2eb;
+  color:#171714;
+  font-size:14px;
+  letter-spacing:.08em;
+}
+
+.brand h1{
+  font-size:17px;
+  font-weight:600;
+  letter-spacing:.02em;
+}
+
+.brand p{
+  color:#bcb6aa;
+  font-size:11px;
+  margin-top:4px;
+}
+
+nav{
+  padding:24px 15px;
+}
+
+.nav-item{
+  border-radius:0;
+  min-height:45px;
+  color:#d7d1c6;
+  padding:0 14px;
+  font-size:13px;
+  font-weight:500;
+  border-left:2px solid transparent;
+  transition:.2s ease;
+}
+
+.nav-item:hover{
+  background:rgba(255,255,255,.045);
+  color:#fff;
+}
+
+.nav-item.active{
+  background:transparent;
+  color:#fff;
+  border-left-color:#d7c6aa;
+  box-shadow:none;
+}
+
+.category-nav{
+  border-left:1px solid rgba(255,255,255,.13);
+  margin:8px 0 20px 15px;
+  padding:2px 0 2px 12px;
+}
+
+.category-nav-label{
+  color:#8e887d;
+  letter-spacing:.14em;
+  font-size:9px;
+  font-weight:600;
+}
+
+.category-nav-item{
+  border-radius:0;
+  color:#bab4aa;
+  min-height:38px;
+  font-weight:500;
+  font-size:11px;
+  letter-spacing:.02em;
+}
+
+.category-nav-item:hover{
+  background:rgba(255,255,255,.04);
+}
+
+.category-nav-item.active{
+  background:rgba(216,205,187,.10);
+  box-shadow:none;
+  border-left:2px solid #d8cdbb;
+}
+
+.sidebar-footer{
+  border-top:1px solid rgba(255,255,255,.1);
+  color:#aaa397;
+}
+
+.main{
+  background:var(--bg);
+}
+
+.topbar,
+.page-header{
+  background:transparent;
+}
+
+.page-header{
+  padding:34px 34px 21px;
+  border-bottom:0;
+}
+
+.page-header h1,
+#pageTitle{
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:400;
+  font-size:34px;
+  letter-spacing:-.02em;
+  color:#1d1b17;
+}
+
+.page-header p,
+#pageSubtitle{
+  color:#817b70;
+  font-size:12px;
+  margin-top:7px;
+}
+
+.page-actions button,
+.primary-btn,
+#refreshBtn,
+#newScheduleBtn{
+  border-radius:0;
+  min-height:44px;
+  padding:0 18px;
+  font-weight:500;
+  letter-spacing:.02em;
+  box-shadow:none;
+}
+
+#refreshBtn{
+  background:#fbfaf7;
+  color:#171714;
+  border:1px solid #d9d4ca;
+}
+
+#newScheduleBtn,
+.primary-btn{
+  background:#171714;
+  color:#fff;
+  border:1px solid #171714;
+}
+
+#newScheduleBtn:hover,
+.primary-btn:hover{
+  background:#3a372f;
+}
+
+.content{
+  padding:0 34px 36px;
+}
+
+.filters{
+  border-radius:0;
+  background:var(--panel);
+  border:1px solid var(--line);
+  box-shadow:none;
+  padding:18px 20px;
+  gap:12px;
+}
+
+.filters input,
+.filters select,
+input,
+select,
+textarea{
+  border-radius:0;
+  border:1px solid #d9d4ca;
+  background:#fff;
+  color:#25231f;
+  min-height:43px;
+  box-shadow:none;
+}
+
+.filters input:focus,
+.filters select:focus,
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#9d8e78;
+  box-shadow:0 0 0 2px rgba(157,142,120,.12);
+}
+
+.table-panel,
+.card,
+.panel{
+  border-radius:0;
+  background:var(--panel);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+}
+
+.table-wrap{
+  border-radius:0;
+}
+
+table{
+  background:var(--panel);
+}
+
+thead{
+  background:#f0ede6;
+}
+
+th{
+  color:#6f695f;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  padding:17px 16px;
+  border-bottom:1px solid var(--line);
+}
+
+td{
+  padding:17px 16px;
+  border-bottom:1px solid #e4e0d8;
+  vertical-align:middle;
+  font-size:12px;
+}
+
+tbody tr{
+  background:transparent;
+  transition:background .18s ease;
+}
+
+tbody tr:hover{
+  background:#f2eee6;
+}
+
+tbody tr:last-child td{
+  border-bottom:0;
+}
+
+td strong{
+  color:#1c1a16;
+  font-weight:600;
+}
+
+td small{
+  color:#888175;
+  margin-top:4px;
+}
+
+.badge{
+  border-radius:999px;
+  box-shadow:none;
+  font-size:10px;
+  font-weight:600;
+  padding:7px 10px;
+  border:1px solid transparent;
+}
+
+.table-action{
+  border-radius:0;
+  background:#ede8de;
+  color:#2a2823;
+  font-weight:600;
+  padding:9px 13px;
+  border:1px solid #d8d1c5;
+}
+
+.table-action:hover{
+  background:#ddd4c4;
+}
+
+.inline-select,
+.inline-date{
+  border-radius:0;
+  background:#fff;
+  border:1px solid #bfb7aa;
+}
+
+.inline-save,
+.inline-cancel{
+  border-radius:0;
+}
+
+.inline-save{
+  background:#dfe5dc;
+  color:#4d6047;
+}
+
+.inline-cancel{
+  background:#eeeae2;
+  color:#6e675d;
+}
+
+.modal{
+  background:rgba(24,22,18,.72);
+  backdrop-filter:blur(4px);
+}
+
+.modal-card,
+.modal-content{
+  border-radius:0;
+  background:#fbfaf7;
+  box-shadow:0 28px 90px rgba(0,0,0,.24);
+  border:1px solid #ded8cc;
+}
+
+.modal-card h2,
+.modal-content h2{
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:400;
+  font-size:28px;
+}
+
+.close-btn{
+  border-radius:0;
+  background:#eeeae2;
+  color:#2a2823;
+}
+
+.sync-overlay{
+  background:rgba(20,19,16,.76);
+}
+
+.sync-card{
+  border-radius:0;
+  background:#fbfaf7;
+  box-shadow:0 28px 90px rgba(0,0,0,.28);
+}
+
+.sync-logo{
+  border-radius:0;
+  background:#171714;
+  color:#fff;
+}
+
+.sync-progress{
+  background:#e5e0d7;
+  border-radius:0;
+}
+
+.sync-progress-bar{
+  background:#9d8e78;
+  border-radius:0;
+}
+
+.toast{
+  border-radius:0;
+  background:#1d1b17;
+  color:#fff;
+  box-shadow:0 18px 40px rgba(0,0,0,.22);
+}
+
+.connection-badge{
+  border-radius:0;
+  background:rgba(255,255,255,.04);
+}
+
+@media(max-width:980px){
+  .page-header{
+    padding:24px 20px 16px;
+  }
+
+  .content{
+    padding:0 20px 24px;
+  }
+
+  .page-header h1,
+  #pageTitle{
+    font-size:28px;
+  }
+
+  .filters{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:680px){
+  .filters{
+    grid-template-columns:1fr;
+  }
+
+  .page-actions{
+    gap:7px;
+  }
+
+  .page-actions button{
+    padding:0 12px;
+  }
+}
+
+.date-cell{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:4px;
+}
+.delay-warning{
+  color:#b91c1c;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.order-row.attitude-overdue td{
+  background:#feecec!important;
+  color:#7f1d1d;
+  font-weight:700;
+}
+.order-row.attitude-overdue:hover td{
+  background:#fddede!important;
+}
+.order-row.attitude-overdue small{
+  color:#991b1b;
+  font-weight:700;
+}
+
+.filters{
+  grid-template-columns:minmax(270px,1.7fr) repeat(5,minmax(160px,1fr));
+}
+
+@media(max-width:1450px){
+  .filters{
+    grid-template-columns:minmax(260px,1.5fr) repeat(2,minmax(180px,1fr));
+  }
+}
+
+@media(max-width:900px){
+  .filters{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:620px){
+  .filters{
+    grid-template-columns:1fr;
+  }
+}
+
+
+
+.order-number-cell{display:flex;align-items:center;gap:8px}
+.order-star-btn{width:28px;height:28px;border:1px solid #d8d1c5;background:#f7f3eb;color:#9a7b3d;cursor:pointer;font-size:16px;line-height:1}
+.order-star-btn:hover{background:#eadfc9}
+.order-items-modal-card{width:min(96vw,1500px);max-height:90vh;overflow:hidden;display:flex;flex-direction:column}
+.order-items-table-wrap{overflow:auto;border-top:1px solid var(--line)}
+.order-items-table{min-width:1500px}
+.order-items-table td{white-space:normal;vertical-align:top;line-height:1.45}
+.order-items-table .observation-cell{min-width:260px;max-width:360px}
+.order-items-table .product-cell{min-width:260px}
+.order-items-table .status-cell{min-width:150px}
+.order-items-table .date-detail-cell{min-width:145px}
+
+
+
+.supervision-choice-modal{width:min(620px,100%)}
+.supervision-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.supervision-choice{border:1px solid #d8d1c5;background:#fbfaf7;padding:22px;text-align:left;cursor:pointer;display:grid;gap:8px;min-height:120px}
+.supervision-choice:hover{background:#eee8dc;border-color:#a58d72}
+.supervision-choice strong{font-size:16px;color:#1c1b18}
+.supervision-choice span{font-size:12px;color:#77736b;line-height:1.5}
+.supervision-items-modal{width:min(1050px,100%)}
+.supervision-selection-actions{display:flex;gap:8px;margin-bottom:12px}
+.supervision-selection-wrap{max-height:55vh;overflow:auto}
+.supervision-selection-table{min-width:900px}
+.supervision-selection-table input[type="checkbox"]{width:18px;height:18px}
+.supervision-inline-cell{min-width:170px}
+.supervision-inline-cell .inline-select{width:180px;max-width:180px}
+.supervision-inline-cell .inline-date{width:145px}
+@media(max-width:700px){.supervision-choice-grid{grid-template-columns:1fr}}
+
+.table-pagination{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:14px 18px;
+  border-top:1px solid var(--line);
+  background:#fbfaf7;
+}
+.pagination-summary{
+  color:#77736b;
+  font-size:12px;
+}
+.pagination-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.pagination-actions label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#77736b;
+  font-size:12px;
+}
+.pagination-actions select{
+  min-height:34px;
+  height:34px;
+  padding:0 30px 0 10px;
+}
+.pagination-actions button{
+  min-height:34px;
+  padding:0 14px;
+  border:1px solid #d9d4ca;
+  background:#fff;
+  cursor:pointer;
+}
+.pagination-actions button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+#pageIndicator{
+  min-width:90px;
+  text-align:center;
+  font-size:12px;
+  color:#4f4a42;
+}
+@media(max-width:700px){
+  .table-pagination{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .pagination-actions{
+    width:100%;
+    flex-wrap:wrap;
+  }
+}
+
+/* Correção da tabela larga */
+.table-panel{
+  overflow:hidden;
+}
+
+.table-wrap{
+  width:100%;
+  max-width:100%;
+  overflow-x:auto!important;
+  overflow-y:visible;
+  -webkit-overflow-scrolling:touch;
+}
+
+.table-wrap table{
+  width:max-content;
+  min-width:100%;
+  table-layout:auto;
+}
+
+#ordersHead th,
+#ordersTable td{
+  white-space:nowrap;
+}
+
+#ordersTable td:nth-child(4),
+#ordersTable td:nth-child(6){
+  white-space:normal;
+}
+
+.table-wrap::-webkit-scrollbar{
+  height:12px;
+}
+
+.table-wrap::-webkit-scrollbar-track{
+  background:#eee9df;
+}
+
+.table-wrap::-webkit-scrollbar-thumb{
+  background:#b8aa96;
+  border:3px solid #eee9df;
+}
+
+.table-wrap::-webkit-scrollbar-thumb:hover{
+  background:#95836c;
+}
+
+.delay-reason-cell{min-width:190px}
+.delay-reason-disabled{display:inline-flex;align-items:center;min-height:32px;padding:6px 9px;background:#eeeae2;color:#9a958c;border:1px solid #e0dbd2;cursor:not-allowed;font-size:11px}
+.delay-reason-trigger{display:inline-flex;align-items:center;min-height:32px;padding:6px 9px;background:#fff8e8;color:#76591f;border:1px solid #d8c59e;cursor:pointer;font-size:11px;font-weight:600}
+.delay-reason-trigger:hover{background:#f4e7c8}
+.delay-item-disabled{opacity:.45;background:#f3f1ed}
+
+.great-volume-row td{
+  background:#6d28a8!important;
+  color:#fff!important;
+  border-bottom-color:rgba(255,255,255,.22)!important;
+  font-weight:600;
+}
+
+.great-volume-row:hover td{
+  background:#5b218d!important;
+}
+
+.great-volume-row td,
+.great-volume-row strong,
+.great-volume-row small,
+.great-volume-row .order-link,
+.great-volume-row .inline-edit-trigger,
+.great-volume-row .delay-warning{
+  color:#fff!important;
+}
+
+.great-volume-row .badge{
+  background:rgba(255,255,255,.17)!important;
+  color:#fff!important;
+  border-color:rgba(255,255,255,.35)!important;
+}
+
+.great-volume-row .order-star-btn{
+  background:rgba(255,255,255,.15);
+  color:#fff!important;
+  border-color:rgba(255,255,255,.45);
+}
+
+.great-volume-row select,
+.great-volume-row input,
+.great-volume-row textarea{
+  color:#1c1b18!important;
+  background:#fff!important;
+}
+
+.great-volume-value{
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.compact-order-cell{display:grid;gap:4px;min-width:205px;text-align:left}
+.compact-order-title{display:flex;align-items:center;gap:7px;font-size:13px;line-height:1.25}
+.compact-meta{font-size:10px;line-height:1.3;color:#77736b;white-space:normal}
+.compact-meta span{font-weight:700}
+.compact-delay{color:#b91c1c;font-size:9px;margin-left:4px}
+.compact-product-cell{display:grid;gap:4px;min-width:240px;white-space:normal}
+.compact-product-cell strong{font-size:12px}
+.compact-product-cell span{color:#77736b;font-size:11px;line-height:1.35}
+.compact-order-button{display:block;width:100%;padding:0;border:0;background:transparent;text-align:left}
+.great-volume-row .compact-meta,
+.great-volume-row .compact-product-cell span,
+.great-volume-row .compact-delay{color:#fff!important}
+#ordersTable td:nth-child(2){min-width:220px}
+#ordersTable td:nth-child(4){min-width:250px}
+
+.compact-client-cell{
+  display:grid;
+  gap:4px;
+  min-width:250px;
+  max-width:360px;
+  white-space:normal;
+}
+
+.compact-client-cell strong{
+  font-size:12px;
+  line-height:1.25;
+}
+
+.compact-client-address{
+  display:-webkit-box;
+  overflow:hidden;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  font-size:10px;
+  line-height:1.35;
+  color:#77736b;
+  text-transform:none;
+}
+
+.compact-empty-address{
+  font-style:italic;
+  opacity:.75;
+}
+
+.combined-status-cell{
+  min-width:190px;
+  vertical-align:middle;
+}
+
+.combined-status-main,
+.combined-status-date{
+  display:block;
+  width:100%;
+  min-height:0;
+  padding:3px 0;
+  text-align:left;
+}
+
+.combined-status-main{
+  margin-bottom:2px;
+}
+
+.combined-status-date .inline-edit-trigger{
+  color:#77736b;
+  font-size:10px;
+  line-height:1.2;
+}
+
+.combined-status-date .inline-edit-trigger::before{
+  content:"Data: ";
+  font-weight:700;
+}
+
+#ordersTable th,
+#ordersTable td{
+  padding-top:12px;
+  padding-bottom:12px;
+}
+
+#ordersTable td:nth-child(3){
+  min-width:270px;
+}
+
+.great-volume-row .compact-client-address,
+.great-volume-row .combined-status-date .inline-edit-trigger{
+  color:#fff!important;
+}
+
+.compact-delay-reason{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-top:3px;
+  min-height:22px;
+}
+
+.compact-delay-label{
+  color:#9a6200;
+  font-size:10px;
+  font-weight:700;
+}
+
+.compact-delay-trigger{
+  display:inline-block;
+  width:auto;
+  max-width:100%;
+  padding:3px 7px;
+  border:1px solid #dfc38f;
+  border-radius:4px;
+  background:#fffaf0;
+  color:#8a5400;
+  font-size:10px;
+  line-height:1.2;
+  text-align:left;
+  white-space:normal;
+}
+
+.compact-delay-trigger:hover{
+  background:#fff4d9;
+}
+
+.compact-product-cell{
+  max-width:430px;
+}
+
+.compact-product-cell > span{
+  display:-webkit-box;
+  overflow:hidden;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+}
+
+.great-volume-row .compact-delay-label{
+  color:#fff!important;
+}
+
+.great-volume-row .compact-delay-trigger{
+  border-color:rgba(255,255,255,.55);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+}
+
+.compact-order-statuses{
+  display:grid;
+  gap:4px;
+  margin-top:5px;
+  padding-top:5px;
+  border-top:1px solid rgba(120,110,95,.16);
+}
+
+.compact-order-status{
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  gap:6px;
+  width:max-content;
+  max-width:100%;
+  color:#4f4b45;
+  font-size:10px;
+  line-height:1.35;
+  cursor:help;
+  outline:none;
+}
+
+.compact-order-status-dot{
+  flex:0 0 auto;
+  width:8px;
+  height:8px;
+  margin-top:3px;
+  border-radius:3px;
+  background:#b7b2aa;
+}
+
+.compact-order-status-schedule .compact-order-status-dot{
+  background:#43c98b;
+}
+
+.compact-order-status-forecast .compact-order-status-dot{
+  background:#e7ad3a;
+}
+
+.order-status-tooltip{
+  position:absolute;
+  left:0;
+  bottom:calc(100% + 8px);
+  z-index:40;
+  display:none;
+  width:280px;
+  max-width:calc(100vw - 40px);
+  padding:10px 12px;
+  border:1px solid #d9d2c7;
+  border-radius:8px;
+  background:#171715;
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+  color:#fff;
+  text-align:left;
+  white-space:normal;
+}
+
+.order-status-tooltip::after{
+  content:"";
+  position:absolute;
+  left:18px;
+  top:100%;
+  border:6px solid transparent;
+  border-top-color:#171715;
+}
+
+.order-status-tooltip strong{
+  display:block;
+  margin-bottom:5px;
+  font-size:11px;
+}
+
+.order-status-tooltip span{
+  display:block;
+  margin-top:3px;
+  color:#e7e3dc;
+  font-size:10px;
+  line-height:1.4;
+}
+
+.compact-order-status:hover .order-status-tooltip,
+.compact-order-status:focus .order-status-tooltip,
+.compact-order-status:focus-within .order-status-tooltip{
+  display:block;
+}
+
+.great-volume-row .compact-order-status{
+  color:#fff!important;
+}
+
+.great-volume-row .compact-order-statuses{
+  border-top-color:rgba(255,255,255,.25);
+}
+
+.compact-type-cell{
+  display:grid;
+  justify-items:start;
+  gap:7px;
+  min-width:120px;
+}
+
+.pv-release-status{
+  display:flex;
+  align-items:flex-start;
+  gap:6px;
+  max-width:150px;
+  padding:4px 7px;
+  border:1px solid #d8d2c7;
+  border-radius:5px;
+  background:#f7f5f1;
+  color:#57524a;
+  font-size:9px;
+  font-weight:600;
+  line-height:1.3;
+  white-space:normal;
+}
+
+.pv-release-dot{
+  flex:0 0 auto;
+  width:7px;
+  height:7px;
+  margin-top:2px;
+  border-radius:50%;
+  background:#3f9cff;
+}
+
+.great-volume-row .pv-release-status{
+  border-color:rgba(255,255,255,.45);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+}
+
+.great-volume-row .pv-release-dot{
+  background:#fff;
+}
+
+.compact-commercial-info{
+  display:block;
+  max-width:230px;
+  overflow:hidden;
+  color:#77736b;
+  font-size:9px;
+  font-weight:600;
+  line-height:1.3;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.great-volume-row .compact-commercial-info{
+  color:#fff!important;
+}
+
+.grouped-client-name{
+  position:relative;
+  display:inline-block;
+  cursor:help;
+  outline:none;
+}
+
+.grouped-client-name::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-3px;
+  height:1px;
+  background:transparent;
+}
+
+.grouped-client-name:hover::after,
+.grouped-client-name:focus::after{
+  background:rgba(17,17,17,.18);
+}
+
+.grouped-items-tooltip{
+  position:absolute;
+  left:0;
+  top:calc(100% + 10px);
+  z-index:80;
+  display:none;
+  width:340px;
+  max-width:min(340px,calc(100vw - 48px));
+  max-height:440px;
+  overflow:auto;
+  padding:12px 14px;
+  border:1px solid #d8d2c7;
+  border-radius:9px;
+  background:#fff;
+  box-shadow:0 14px 34px rgba(0,0,0,.20);
+  color:#27231f;
+  text-align:left;
+  text-transform:none;
+  white-space:normal;
+}
+
+.grouped-items-tooltip::before{
+  content:"";
+  position:absolute;
+  left:18px;
+  bottom:100%;
+  border:7px solid transparent;
+  border-bottom-color:#d8d2c7;
+}
+
+.grouped-items-tooltip::after{
+  content:"";
+  position:absolute;
+  left:19px;
+  bottom:100%;
+  border:6px solid transparent;
+  border-bottom-color:#fff;
+}
+
+.grouped-client-name:hover .grouped-items-tooltip,
+.grouped-client-name:focus .grouped-items-tooltip,
+.grouped-client-name:focus-within .grouped-items-tooltip{
+  display:block;
+}
+
+.grouped-items-tooltip-title{
+  display:block;
+  margin-bottom:8px;
+  padding-bottom:8px;
+  border-bottom:1px solid #e8e3da;
+  font-size:12px;
+}
+
+.grouped-items-tooltip-list{
+  display:grid;
+}
+
+.grouped-tooltip-item{
+  display:grid;
+  gap:3px;
+  padding:9px 0;
+  border-bottom:1px solid #eee9e1;
+  font-size:10px;
+  font-weight:400;
+  line-height:1.4;
+}
+
+.grouped-tooltip-item:last-child{
+  border-bottom:0;
+}
+
+.grouped-tooltip-item b{
+  font-weight:700;
+}
+
+.grouped-tooltip-product{
+  display:-webkit-box;
+  overflow:hidden;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+}
+
+.tooltip-gv-yes{
+  color:#c7352b;
+  font-weight:800;
+}
+
+.tooltip-gv-no{
+  color:#168047;
+  font-weight:700;
+}
+
+.grouped-tooltip-more{
+  margin-top:6px;
+  padding-top:8px;
+  border-top:1px solid #e8e3da;
+  font-size:10px;
+  font-weight:700;
+}
+
+.great-volume-row .grouped-client-name{
+  color:#fff;
+}
+
+.great-volume-row .grouped-items-tooltip{
+  color:#27231f;
+}
+
+@media(max-width:760px){
+  .grouped-items-tooltip{
+    position:fixed;
+    left:50%;
+    top:50%;
+    width:min(340px,calc(100vw - 32px));
+    max-height:70vh;
+    transform:translate(-50%,-50%);
+  }
+
+  .grouped-items-tooltip::before,
+  .grouped-items-tooltip::after{
+    display:none;
+  }
+}
+
+.customer-name-button{appearance:none;padding:0;border:0;background:transparent;color:inherit;font:inherit;font-weight:700;text-align:left;cursor:pointer}
+.customer-name-button:hover,.customer-name-button:focus{text-decoration:underline;text-underline-offset:3px;outline:none}
+.item-customer-name{font-size:12px;line-height:1.25}
+.customer-orders-modal{width:min(1180px,100%);max-height:88vh;overflow:hidden}
+.customer-orders-summary{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:10px;margin:0 0 16px}
+.customer-summary-card{display:grid;gap:3px;padding:12px 14px;border:1px solid #e1dbd1;border-radius:8px;background:#faf8f4}
+.customer-summary-card strong{font-size:20px}
+.customer-summary-card span{color:#77736b;font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+.customer-summary-alert strong{color:#b91c1c}
+.customer-orders-table-wrap{max-height:62vh;overflow:auto;border:1px solid #e1dbd1}
+.customer-orders-table{width:100%;border-collapse:collapse}
+.customer-orders-table th{position:sticky;top:0;z-index:2;padding:11px 12px;background:#f6f4ef;color:#5d574f;font-size:9px;letter-spacing:.08em;text-align:left;text-transform:uppercase}
+.customer-orders-table td{padding:12px;border-top:1px solid #e7e1d8;vertical-align:top;font-size:10px}
+.customer-order-link{appearance:none;padding:0;border:0;background:transparent;color:#111;cursor:pointer;text-align:left}
+.customer-order-link:hover{text-decoration:underline}
+.customer-commercial-cell,.customer-dates-cell,.customer-status-cell{display:grid;gap:4px}
+.customer-commercial-cell span,.customer-dates-cell span{color:#77736b}
+.customer-dates-cell em{margin-left:4px;color:#b91c1c;font-size:8px;font-style:normal;font-weight:800}
+.customer-items-preview{display:grid;gap:8px;min-width:270px}
+.customer-item-preview{display:grid;gap:2px;padding-bottom:7px;border-bottom:1px solid #eee9e1}
+.customer-item-preview:last-child{border-bottom:0}
+.customer-item-preview span{color:#514d47;line-height:1.35}
+.customer-item-preview small{color:#837d74;font-size:9px}
+.customer-more-items{color:#6f6961;font-size:9px;font-weight:700}
+.modal-subtitle{margin:3px 0 0;color:#77736b;font-size:11px}
+body.modal-open{overflow:hidden}
+@media(max-width:800px){
+  .customer-orders-summary{grid-template-columns:repeat(2,minmax(110px,1fr))}
+  .customer-orders-modal{width:calc(100vw - 20px)}
+  .customer-orders-table{min-width:900px}
+}
+
+#customerOrdersModal{
+  z-index:160;
+}
+
+#customerOrdersModal.open{
+  display:flex;
+}
+
+.customer-orders-modal{
+  padding:22px;
+}
+
+.copy-order-btn{
+  appearance:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  width:24px;
+  height:24px;
+  padding:0;
+  border:1px solid #d9d2c7;
+  border-radius:5px;
+  background:#fff;
+  color:#4f4a43;
+  font-size:14px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.copy-order-btn:hover,
+.copy-order-btn:focus{
+  border-color:#b7aa97;
+  background:#f7f3ec;
+  outline:none;
+}
+
+.copy-order-btn:active{
+  transform:translateY(1px);
+}
+
+.compact-order-title .copy-order-btn{
+  width:21px;
+  height:21px;
+  margin-left:2px;
+  font-size:12px;
+}
+
+.customer-order-number-wrap{
+  display:flex;
+  align-items:flex-start;
+  gap:7px;
+}
+
+.copy-order-btn-modal{
+  width:22px;
+  height:22px;
+  font-size:12px;
+}
+
+.order-items-title{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+}
+
+.copy-order-btn-heading{
+  width:25px;
+  height:25px;
+  font-size:13px;
+}
+
+.great-volume-row .copy-order-btn{
+  border-color:rgba(255,255,255,.5);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+}
+
+.great-volume-row .copy-order-btn:hover{
+  background:rgba(255,255,255,.22);
+}
+
+.attitude-sort-button{
+  appearance:none;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  font:inherit;
+  letter-spacing:inherit;
+  text-transform:inherit;
+  cursor:pointer;
+}
+
+.attitude-sort-button strong{
+  font-size:13px;
+  line-height:1;
+}
+
+.attitude-sort-button:hover,
+.attitude-sort-button:focus{
+  color:#111;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  outline:none;
+}
+
+.customer-positioning-block{
+  display:grid;
+  gap:6px;
+  margin-top:7px;
+  padding-top:7px;
+  border-top:1px solid rgba(120,110,95,.18);
+}
+
+.customer-positioning-date{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  color:#77736b;
+  font-size:9px;
+  line-height:1.3;
+}
+
+.customer-positioning-date span{
+  font-weight:600;
+}
+
+.customer-positioning-date strong{
+  color:#4d4841;
+  font-size:10px;
+}
+
+.customer-positioning-toggle{
+  appearance:none;
+  width:max-content;
+  max-width:100%;
+  padding:5px 8px;
+  border:1px solid #d7b979;
+  border-radius:5px;
+  background:#fff8e7;
+  color:#8a5a00;
+  font-size:9px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.customer-positioning-toggle:hover,
+.customer-positioning-toggle:focus{
+  background:#ffefc5;
+  outline:none;
+}
+
+.customer-positioning-toggle.is-positioned{
+  border-color:#86cba5;
+  background:#e9f8ef;
+  color:#167245;
+}
+
+.great-volume-row .customer-positioning-block{
+  border-top-color:rgba(255,255,255,.25);
+}
+
+.great-volume-row .customer-positioning-date,
+.great-volume-row .customer-positioning-date strong{
+  color:#fff!important;
+}
+
+.item-positioning-info{
+  display:grid;
+  gap:4px;
+  margin-top:7px;
+  padding-top:7px;
+  border-top:1px solid rgba(120,110,95,.18);
+}
+
+.item-positioning-info>div{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-size:9px;
+  line-height:1.3;
+}
+
+.item-positioning-info span{
+  color:#77736b;
+  font-weight:600;
+}
+
+.item-positioning-info strong{
+  color:#4d4841;
+  font-size:10px;
+  white-space:nowrap;
+}
+
+.item-positioning-info strong.is-yes{
+  color:#167245;
+}
+
+.item-positioning-info strong.is-no{
+  color:#a76600;
+}
+
+.great-volume-row .item-positioning-info{
+  border-top-color:rgba(255,255,255,.25);
+}
+
+.great-volume-row .item-positioning-info span,
+.great-volume-row .item-positioning-info strong{
+  color:#fff!important;
+}
+
+.page-title-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.page-title-row h1{
+  margin-bottom:0;
+}
+
+.supervisor-dashboard-button{
+  appearance:none;
+  border:1px solid #cad5e4;
+  border-radius:999px;
+  background:#fff;
+  color:#24415f;
+  padding:7px 12px;
+  font-size:12px;
+  font-weight:800;
+}
+
+.supervisor-dashboard-button:hover,
+.supervisor-dashboard-button:focus{
+  border-color:var(--blue);
+  color:var(--blue);
+  outline:none;
+}
+
+.supervisor-dashboard{
+  display:grid;
+  gap:18px;
+}
+
+.supervisor-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  align-items:stretch;
+}
+
+.supervisor-metrics>.supervisor-metric-total{
+  grid-column:1/-1;
+}
+
+.supervisor-metric{
+  appearance:none;
+  text-align:left;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#fff;
+  padding:18px;
+  box-shadow:var(--shadow);
+  color:var(--text);
+  min-width:0;
+}
+
+.supervisor-metric:hover,
+.supervisor-metric:focus{
+  border-color:var(--blue);
+  transform:translateY(-1px);
+  outline:none;
+}
+
+.supervisor-metric span,
+.supervisor-metric small{
+  display:block;
+}
+
+.supervisor-metric span{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+}
+
+.supervisor-metric strong{
+  display:block;
+  margin:7px 0 3px;
+  font-size:29px;
+}
+
+.supervisor-metric small{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.35;
+}
+
+.supervisor-metric.is-warning{
+  border-left:4px solid #d89b25;
+}
+
+.supervisor-metric.is-danger{
+  border-left:4px solid #c94f4f;
+}
+
+.supervisor-dashboard-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+}
+
+
+.supervisor-positioning{
+  display:grid;
+  gap:12px;
+}
+
+.supervisor-position-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.supervisor-position-summary>div{
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:11px;
+  text-align:center;
+}
+
+.supervisor-position-summary span{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.supervisor-position-summary strong{
+  display:block;
+  margin-top:5px;
+  font-size:22px;
+}
+
+.supervisor-progress{
+  height:10px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#e9edf2;
+}
+
+.supervisor-progress>div{
+  height:100%;
+  border-radius:inherit;
+  background:var(--blue);
+}
+
+.supervisor-progress-label{
+  text-align:right;
+  font-weight:700;
+}
+
+.supervisor-position-action{
+  appearance:none;
+  border:1px solid #e3bd73;
+  border-radius:10px;
+  background:#fff8e7;
+  color:#855500;
+  padding:10px 12px;
+  font-weight:700;
+}
+
+.supervisor-position-action:hover,
+.supervisor-position-action:focus{
+  background:#ffefc5;
+  outline:none;
+}
+
+.supervisor-count-badge{
+  border-radius:999px;
+  background:#eef3f8;
+  color:#4a6075;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.supervisor-critical-list{
+  display:grid;
+  gap:8px;
+}
+
+.supervisor-critical-item{
+  appearance:none;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#fff;
+  padding:12px 14px;
+  text-align:left;
+  color:var(--text);
+}
+
+.supervisor-critical-item:hover,
+.supervisor-critical-item:focus{
+  border-color:#c94f4f;
+  background:#fffafa;
+  outline:none;
+}
+
+.supervisor-critical-main{
+  min-width:0;
+}
+
+.supervisor-critical-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:3px;
+}
+
+.supervisor-critical-main>span,
+.supervisor-critical-main>small{
+  display:block;
+}
+
+.supervisor-critical-main>span{
+  font-size:12px;
+}
+
+.supervisor-critical-main>small{
+  margin-top:4px;
+  color:#a34b4b;
+  font-size:10px;
+  line-height:1.4;
+}
+
+.supervisor-critical-item>b{
+  flex:0 0 auto;
+  color:var(--blue);
+  font-size:12px;
+}
+
+@media(max-width:1100px){
+  .supervisor-metrics{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .supervisor-metric-total{
+    grid-template-columns:1fr;
+  }
+
+  .category-summary{
+    padding-top:18px;
+    padding-left:0;
+    border-top:1px solid var(--line);
+    border-left:0;
+  }
+}
+
+@media(max-width:650px){
+  .supervisor-metrics{
+    grid-template-columns:1fr;
+  }
+
+  .supervisor-position-summary{
+    grid-template-columns:1fr;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media(max-width:1320px){
+  .supervisor-metric-total{
+    grid-template-columns:minmax(230px,.8fr) minmax(420px,1.2fr);
+  }
+}
+
+
+
+.supervisor-metric-total{
+  display:grid;
+  grid-template-columns:minmax(260px,.75fr) minmax(520px,1.25fr);
+  gap:28px;
+  align-items:stretch;
+  cursor:default;
+  overflow:hidden;
+}
+
+.supervisor-total-left{
+  appearance:none;
+  display:grid;
+  gap:14px;
+  align-content:start;
+  min-width:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  text-align:left;
+}
+
+.supervisor-total-left:hover,
+.supervisor-total-left:focus{
+  outline:none;
+}
+
+.supervisor-total-main{
+  min-width:0;
+}
+
+.supervisor-total-main>span,
+.supervisor-total-main>small{
+  display:block;
+}
+
+.supervisor-total-main>span{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.supervisor-total-main>strong{
+  display:block;
+  margin:5px 0 0;
+  font-size:30px;
+  line-height:1;
+}
+
+.supervisor-total-main>b{
+  display:block;
+  margin-top:10px;
+  font-size:18px;
+  line-height:1;
+}
+
+.supervisor-total-main>small{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.order-type-compact{
+  display:grid;
+  gap:5px;
+  padding-top:12px;
+  border-top:1px solid var(--line);
+}
+
+.order-type-compact-title,
+.category-summary-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:2px;
+}
+
+.order-type-compact-title>span,
+.category-summary-title>span{
+  color:var(--text);
+  font-size:10px;
+  font-weight:800;
+}
+
+.order-type-compact-title>small,
+.category-summary-title>small{
+  color:var(--muted);
+  font-size:8px;
+  white-space:nowrap;
+}
+
+.order-type-compact-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  min-width:0;
+  font-size:8px;
+}
+
+.order-type-compact-row>span{
+  overflow:hidden;
+  color:var(--text);
+  font-weight:700;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.order-type-compact-row>strong{
+  flex:0 0 auto;
+  color:var(--text);
+  font-size:8px;
+  white-space:nowrap;
+}
+
+.order-type-compact-row small{
+  margin:0 3px;
+  color:var(--muted);
+  font-size:7px;
+  font-weight:400;
+}
+
+.category-summary{
+  display:grid;
+  gap:10px;
+  min-width:0;
+  padding-left:28px;
+  border-left:1px solid var(--line);
+  align-content:start;
+}
+
+.category-summary-row{
+  appearance:none;
+  display:grid;
+  gap:4px;
+  width:100%;
+  padding:2px 0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  text-align:left;
+}
+
+.category-summary-row:hover,
+.category-summary-row:focus{
+  outline:none;
+}
+
+.category-summary-row:hover .category-summary-top>span,
+.category-summary-row:focus .category-summary-top>span{
+  color:var(--blue);
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+
+.category-summary-top{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:18px;
+  min-width:0;
+}
+
+.category-summary-top>span{
+  overflow:hidden;
+  color:var(--text);
+  font-size:9px;
+  font-weight:800;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.category-summary-top>strong{
+  flex:0 0 auto;
+  color:var(--text);
+  font-size:8px;
+  white-space:nowrap;
+}
+
+.category-summary-top small{
+  color:var(--muted);
+  font-size:7px;
+  font-weight:600;
+}
+
+.category-summary-top em{
+  margin:0 3px;
+  color:var(--muted);
+  font-style:normal;
+  font-weight:400;
+}
+
+.category-summary-track{
+  height:8px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#e9edf2;
+}
+
+.category-summary-track>div{
+  height:100%;
+  border-radius:inherit;
+  background:var(--blue);
+}
+
+.order-type-summary-empty{
+  color:var(--muted);
+  font-size:8px;
+}
+
+@media(max-width:760px){
+  .supervisor-metric-total{
+    grid-template-columns:1fr;
+  }
+
+  .category-summary{
+    padding-top:14px;
+    padding-left:0;
+    border-top:1px solid var(--line);
+    border-left:0;
+  }
+}
+
+.supervisor-active-filters{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+}
+
+.supervisor-active-filters>span{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+}
+
+.supervisor-filter-chip,
+.supervisor-clear-filters{
+  appearance:none;
+  border:1px solid #c9d4e2;
+  border-radius:999px;
+  background:#f7f9fc;
+  color:#24415f;
+  padding:6px 9px;
+  font-size:9px;
+  font-weight:800;
+}
+
+.supervisor-filter-chip:hover,
+.supervisor-filter-chip:focus,
+.supervisor-clear-filters:hover,
+.supervisor-clear-filters:focus{
+  border-color:var(--blue);
+  outline:none;
+}
+
+.order-type-compact-row{
+  appearance:none;
+  width:100%;
+  border:0;
+  background:transparent;
+  text-align:left;
+  padding:5px 6px;
+  border-radius:7px;
+}
+
+.order-type-compact-row:hover,
+.order-type-compact-row:focus,
+.order-type-compact-row.is-selected{
+  background:#eef3f8;
+  outline:none;
+}
+
+.category-summary-row.is-selected{
+  padding:7px 9px;
+  border-radius:9px;
+  background:#eef3f8;
+}
+
+.category-summary-count{
+  display:grid;
+  grid-template-columns:auto auto auto auto auto;
+  align-items:baseline;
+  gap:4px;
+}
+
+.category-summary-count b{
+  color:var(--text);
+  font-size:13px;
+  line-height:1;
+}
+
+.category-summary-count small{
+  color:var(--muted);
+  font-size:8px;
+}
+
+.category-summary-count em{
+  color:var(--muted);
+  font-size:10px;
+  font-style:normal;
+}
+
+@media(max-width:760px){
+  .category-summary-count{
+    grid-template-columns:auto auto;
+  }
+
+  .category-summary-count em{
+    display:none;
+  }
+}
+
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">CL</div>
+        <div><strong>ClamiLog</strong><span>Gestão Logística</span></div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-view="dashboard">◫ <span>Dashboard</span></button>
+
+        <button class="nav-item" data-view="pedidos" data-all-orders="true">▤ <span>Acompanhamento</span></button>
+
+        <div class="category-nav">
+          <div class="category-nav-label">Categorias</div>
+
+          <button class="category-nav-item" data-category="Agendamento">
+            <span class="category-dot"></span><span>Agendamento</span>
+          </button>
+
+          <button class="category-nav-item" data-category="Previsão">
+            <span class="category-dot"></span><span>Previsão</span>
+          </button>
+
+          <button class="category-nav-item" data-category="Pronta Entrega">
+            <span class="category-dot"></span><span>Pronta Entrega</span>
+          </button>
+
+          <button class="category-nav-item" data-category="Tecido">
+            <span class="category-dot"></span><span>Tecido</span>
+          </button>
+
+          <button class="category-nav-item" data-category="Protetor de tecido">
+            <span class="category-dot"></span><span>Protetor de tecido</span>
+          </button>
+        </div>
+
+        <button class="nav-item" data-view="historico">◷ <span>Histórico</span></button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="connection" id="connectionBadge"><i></i><span>Modo demonstração</span></div>
+        <button id="openConfig" class="secondary full">Configurar conexão</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="page-title-row">
+            <h1 id="pageTitle">Visão geral</h1>
+            <button type="button"
+                    id="supervisorDashboardBtn"
+                    class="supervisor-dashboard-button"
+                    hidden>
+              Dashboard
+            </button>
+          </div>
+          <p id="pageSubtitle">Acompanhamento completo da operação logística</p>
+        </div>
+        <div class="top-actions">
+          <button id="refreshBtn" class="icon-btn" title="Atualizar">↻</button>
+          <button id="newScheduleBtn" class="primary">Atualizar status</button>
+        </div>
+      </header>
+
+      <section id="dashboardView" class="view active">
+        <div class="cards" id="metricCards"></div>
+        <div class="grid-2">
+          <article class="panel">
+            <div class="panel-head">
+              <div><h2>Movimentações logísticas recentes</h2><p>Últimas atualizações registradas na operação</p></div>
+              <button class="link-btn" data-go="historico">Ver histórico</button>
+            </div>
+            <div id="upcomingList" class="stack"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head">
+              <div><h2>Pendências que exigem atenção</h2><p>Itens ainda sem status na Base Logística</p></div>
+              <button class="link-btn" data-go="pedidos">Ver pedidos</button>
+            </div>
+            <div id="attentionList" class="stack"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="pedidosView" class="view">
+        <div id="supervisorDashboard" class="supervisor-dashboard" hidden>
+          <div id="supervisorActiveFilters"
+               class="supervisor-active-filters"
+               hidden></div>
+
+          <div class="supervisor-metrics" id="supervisorMetrics"></div>
+
+          <div class="supervisor-dashboard-grid">
+            <article class="panel supervisor-position-panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Posicionamento do cliente</h2>
+                  <p>Acompanhamento dos pedidos em Previsão</p>
+                </div>
+              </div>
+              <div id="supervisorPositioning" class="supervisor-positioning"></div>
+            </article>
+          </div>
+
+          <article class="panel supervisor-critical-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Atenção do supervisor</h2>
+                <p>Pedidos que precisam de análise ou ação prioritária</p>
+              </div>
+              <span id="supervisorCriticalCount" class="supervisor-count-badge"></span>
+            </div>
+            <div id="supervisorCriticalList" class="supervisor-critical-list"></div>
+          </article>
+        </div>
+
+        <div id="ordersTableArea">
+        <div class="toolbar panel">
+          <input id="searchInput" class="search" placeholder="Pesquisar pedido, cliente, loja, cidade ou produto..." />
+          <select id="statusFilter"><option value="">Todos os status</option></select>
+          <select id="categoryFilter">
+            <option value="">Todos os tipos</option>
+            <option value="Agendamento + Pronta Entrega">Agendamento + Pronta Entrega</option>
+            <option value="Agendamento">Somente Agendamento</option>
+            <option value="Previsão">Previsão</option>
+            <option value="Pronta Entrega">Pronta Entrega</option>
+            <option value="Tecido">Tecido</option>
+            <option value="Protetor de tecido">Protetor de tecido</option>
+          </select>
+          <select id="delayFilter">
+            <option value="">Todos os prazos</option>
+            <option value="original">Atrasados pela Data Original</option>
+            <option value="system">Atrasados pela Data do Sistema</option>
+            <option value="any">Atrasados em qualquer data</option>
+            <option value="none">Sem atraso</option>
+          </select>
+          <select id="cityFilter"><option value="">Todas as cidades</option></select>
+          <select id="transportFilter"><option value="">Todos os transportes</option></select>
+        </div>
+        <div class="panel table-panel">
+          <div class="table-wrap">
+            <table>
+              <thead id="ordersHead"></thead>
+              <tbody id="ordersTable"></tbody>
+            </table>
+          </div>
+          <div class="table-pagination" id="ordersPagination">
+            <div class="pagination-summary" id="paginationSummary"></div>
+            <div class="pagination-actions">
+              <label>
+                Itens por página
+                <select id="pageSizeSelect">
+                  <option value="50">50</option>
+                  <option value="100" selected>100</option>
+                  <option value="200">200</option>
+                </select>
+              </label>
+              <button type="button" id="previousPage">Anterior</button>
+              <span id="pageIndicator"></span>
+              <button type="button" id="nextPage">Próxima</button>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section id="historicoView" class="view">
+        <div class="toolbar panel">
+          <input id="historySearch" class="search" placeholder="Pesquisar pedido, responsável ou observação..." />
+        </div>
+        <div id="historyList" class="timeline panel"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="scheduleModal">
+    <div class="modal large">
+      <div class="modal-head">
+        <div><h2 id="modalTitle">Detalhes e acompanhamento do pedido</h2><p id="modalSubtitle">Informe o status, a data da atitude e a observação. A alteração será aplicada a todos os produtos.</p></div>
+        <button class="close-modal">×</button>
+      </div>
+      <form id="scheduleForm">
+        <div class="form-grid">
+          <label class="span-2">Pedido
+            <input id="orderSelect" readonly required />
+          </label>
+          <label>Status
+            <select id="scheduleStatus" required></select>
+          </label>
+          <label>Data atitude
+            <input id="attitudeDate" type="date" />
+          </label>
+          <label class="span-2">Observação
+            <textarea id="notes" rows="4" required placeholder="Informe a atitude tomada, retorno do cliente, pendência ou próxima ação..."></textarea>
+          </label>
+        </div>
+        <div id="selectedOrderInfo" class="order-preview"></div>
+        <div class="items-box">
+          <h3>Itens do pedido</h3>
+          <div class="table-wrap">
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Categoria</th>
+                  <th>Complemento</th>
+                  <th>Fornecedor</th>
+                  <th>Ordem de compra</th>
+                  <th>Grandes Volumes</th>
+                </tr>
+              </thead>
+              <tbody id="selectedOrderItems"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="secondary close-modal">Cancelar</button>
+          <button type="submit" class="primary" id="saveScheduleBtn">Salvar acompanhamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="configModal">
+    <div class="modal">
+      <div class="modal-head"><div><h2>Conexão com Google Sheets</h2><p>Cole a URL do Web App publicado no Apps Script.</p></div><button class="close-config">×</button></div>
+      <label>URL do Apps Script<input id="apiUrlInput" placeholder="https://script.google.com/macros/s/.../exec" /></label>
+      <p class="help">Sem URL, o sistema funciona em demonstração. Depois de publicar o arquivo <b>Code.gs</b>, cole aqui a URL gerada.</p>
+      <div class="modal-actions"><button class="secondary" id="clearConfig">Usar demonstração</button><button class="primary" id="saveConfig">Salvar e conectar</button></div>
+    </div>
+  </div>
+
+
+  <div class="sync-overlay" id="syncOverlay" aria-live="polite" aria-busy="true">
+    <div class="sync-card" id="syncCard">
+      <div class="sync-logo" id="syncLogo">CL</div>
+      <div class="sync-spinner" id="syncSpinner"></div>
+      <h2 id="syncTitle">Sincronizando dados...</h2>
+      <p id="syncMessage">Aguarde enquanto o ClamiLog consulta a planilha e atualiza o painel.</p>
+
+      <div class="sync-progress">
+        <div class="sync-progress-bar" id="syncProgressBar"></div>
+      </div>
+
+      <div class="sync-steps">
+        <div class="sync-step" id="syncStep1"><span class="step-icon">1</span><span>Conectando ao Google Sheets</span></div>
+        <div class="sync-step" id="syncStep2"><span class="step-icon">2</span><span>Lendo a Base Logística</span></div>
+        <div class="sync-step" id="syncStep3"><span class="step-icon">3</span><span>Atualizando categorias e pedidos</span></div>
+        <div class="sync-step" id="syncStep4"><span class="step-icon">4</span><span>Carregando o painel</span></div>
+      </div>
+
+      <p class="sync-note">Não feche esta janela. O processo pode levar alguns segundos.</p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+<div class="modal-backdrop" id="orderItemsModal">
+  <div class="modal-card order-items-modal-card">
+    <div class="modal-header">
+      <div>
+        <h2 class="order-items-title">
+          Itens do pedido
+          <span id="orderItemsPedido"></span>
+          <button id="copyOrderItemsPedido" type="button"
+                  class="copy-order-btn copy-order-btn-heading"
+                  title="Copiar número do pedido"
+                  aria-label="Copiar número do pedido">
+            <span aria-hidden="true">⧉</span>
+          </button>
+        </h2>
+        <p id="orderItemsSummary"></p>
+      </div>
+      <button id="closeOrderItemsModal" class="close-btn" type="button">×</button>
+    </div>
+    <div class="order-items-table-wrap">
+      <table class="order-items-table">
+        <thead>
+          <tr>
+            <th>Produto</th><th>Grandes Volumes</th>
+            <th>Status Agendamento</th><th>Data Atitude Agendamento</th><th>Observações Agendamento</th>
+            <th>Status Previsão</th><th>Data Atitude Previsão</th><th>Observações Previsão</th>
+          </tr>
+        </thead>
+        <tbody id="orderItemsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="supervisionScopeModal">
+  <div class="modal supervision-choice-modal">
+    <div class="modal-head">
+      <div>
+        <h2>Aplicar alteração</h2>
+        <p id="supervisionScopeDescription"></p>
+      </div>
+      <button type="button" id="closeSupervisionScope">×</button>
+    </div>
+    <div class="supervision-choice-grid">
+      <button type="button" class="supervision-choice" id="saveOnlyCurrentItem">
+        <strong>Somente este item</strong>
+        <span>Aplica a alteração apenas no produto desta linha.</span>
+      </button>
+      <button type="button" class="supervision-choice" id="chooseOtherItems">
+        <strong>Selecionar outros itens</strong>
+        <span>Escolha quais itens do mesmo pedido receberão o valor.</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="supervisionItemsModal">
+  <div class="modal large supervision-items-modal">
+    <div class="modal-head">
+      <div>
+        <h2>Selecionar itens do pedido <span id="supervisionPedido"></span></h2>
+        <p id="supervisionSelectedValue"></p>
+      </div>
+      <button type="button" id="closeSupervisionItems">×</button>
+    </div>
+    <div class="supervision-selection-actions">
+      <button type="button" class="secondary" id="selectAllSupervisionItems">Marcar todos</button>
+      <button type="button" class="secondary" id="clearAllSupervisionItems">Desmarcar todos</button>
+    </div>
+    <div class="table-wrap supervision-selection-wrap">
+      <table class="items-table supervision-selection-table">
+        <thead>
+          <tr>
+            <th>Selecionar</th>
+            <th>Produto</th>
+            <th>Tipo</th>
+            <th>Status Supervisão atual</th>
+            <th>Data Supervisão atual</th>
+          </tr>
+        </thead>
+        <tbody id="supervisionItemsBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="secondary" id="cancelSupervisionItems">Cancelar</button>
+      <button type="button" class="primary" id="applySupervisionItems">Aplicar aos itens selecionados</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="delayReasonScopeModal">
+  <div class="modal supervision-choice-modal">
+    <div class="modal-head">
+      <div><h2>Aplicar motivo do atraso</h2><p id="delayReasonScopeDescription"></p></div>
+      <button type="button" id="closeDelayReasonScope">×</button>
+    </div>
+    <div class="supervision-choice-grid">
+      <button type="button" class="supervision-choice" id="saveDelayOnlyCurrentItem">
+        <strong>Somente este item</strong><span>Aplica o motivo apenas no produto desta linha.</span>
+      </button>
+      <button type="button" class="supervision-choice" id="chooseOtherDelayItems">
+        <strong>Selecionar outros itens</strong><span>Escolha quais itens atrasados do pedido receberão o motivo.</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="delayReasonItemsModal">
+  <div class="modal large supervision-items-modal">
+    <div class="modal-head">
+      <div><h2>Selecionar itens do pedido <span id="delayReasonPedido"></span></h2><p id="delayReasonSelectedValue"></p></div>
+      <button type="button" id="closeDelayReasonItems">×</button>
+    </div>
+    <div class="supervision-selection-actions">
+      <button type="button" class="secondary" id="selectAllDelayItems">Marcar atrasados</button>
+      <button type="button" class="secondary" id="clearAllDelayItems">Desmarcar todos</button>
+    </div>
+    <div class="table-wrap supervision-selection-wrap">
+      <table class="items-table supervision-selection-table">
+        <thead><tr><th>Selecionar</th><th>Produto</th><th>Tipo</th><th>Data Original</th><th>Motivo atual</th></tr></thead>
+        <tbody id="delayReasonItemsBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="secondary" id="cancelDelayReasonItems">Cancelar</button>
+      <button type="button" class="primary" id="applyDelayReasonItems">Aplicar aos itens selecionados</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const normalizarCodigo=v=>String(v??"").replace(/\./g,"").trim();
+
+const DEMO = {
+  orders: [
+    {pedido:"239845",cliente:"Marina Azevedo",loja:"Clami Gabriel",previsao:"2026-07-21",cidade:"São Paulo",telefone:"(11) 99999-1234",endereco:"Al. Lorena, 900",produtos:["Poltrona Mole","Mesa lateral"],status:"Pendente",itens:2},
+    {pedido:"239912",cliente:"Carlos Monteiro",loja:"Dpot Gabriel",previsao:"2026-07-22",cidade:"São Paulo",telefone:"(11) 98888-4567",endereco:"R. Oscar Freire, 1200",produtos:["Sofá modular"],status:"Agendado",itens:1},
+    {pedido:"240018",cliente:"Ana Ribeiro",loja:"Clami D&D",previsao:"2026-07-24",cidade:"Campinas",telefone:"(19) 97777-1000",endereco:"Av. Norte Sul, 500",produtos:["Mesa de jantar","8 cadeiras"],status:"Contato realizado",itens:9},
+    {pedido:"240041",cliente:"Eduardo Lima",loja:"Dpot D&D",previsao:"2026-07-25",cidade:"São Paulo",telefone:"(11) 96666-2222",endereco:"R. Haddock Lobo, 450",produtos:["Buffet"],status:"Reagendado",itens:1}
+  ],
+  schedules: [
+    {id:"A1",pedido:"239912",cliente:"Carlos Monteiro",loja:"Dpot Gabriel",dataAtitude:"2026-07-20",periodo:"Manhã",status:"Agendado",responsavel:"Karen",observacoes:"Confirmado com portaria."},
+    {id:"A2",pedido:"240041",cliente:"Eduardo Lima",loja:"Dpot D&D",dataAtitude:"2026-07-21",periodo:"Tarde",status:"Reagendado",responsavel:"Ingrid",observacoes:"Cliente solicitou após 14h."}
+  ],
+  history: [
+    {dataHora:"2026-07-18T09:15:00",pedido:"239912",acao:"Agendamento criado",statusNovo:"Agendado",responsavel:"Karen",observacao:"Confirmado com portaria."},
+    {dataHora:"2026-07-18T10:40:00",pedido:"240041",acao:"Pedido reagendado",statusNovo:"Reagendado",responsavel:"Ingrid",observacao:"Cliente solicitou nova data."}
+  ]
+};
+
+const DEFAULT_API_URL = window.location.href.split("?")[0];
+let ordersDisplayMode="items";
+let groupedScreenContext="";
+let ordersCurrentPage=1;
+let ordersPageSize=100;
+let lastFilteredOrdersCount=0;
+let supervisorDashboardOpen=false;
+let supervisorQuickFilter="";
+let supervisorDashboardTypeFilter="";
+let supervisorDashboardCategoryFilter="";
+let supervisorPreviousView={
+  mode:"items",
+  category:"",
+  title:"Acompanhamento de pedidos",
+  subtitle:""
+};
+const state = {orders:[],schedules:[],history:[],statuses:[],delayReasons:[], attitudeSortDirection:"asc", apiUrl:localStorage.getItem("clamilog_api_url")||DEFAULT_API_URL, editing:null};
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const norm = s => String(s??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
+
+function escapeHtml(value){
+  return String(value??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function canonicalCategory(value){
+  const key=norm(value).replace(/\s+/g," ");
+  const categories={
+    "agendamento":"Agendamento",
+    "previsao":"Previsão",
+    "pronta entrega":"Pronta Entrega",
+    "tecido":"Tecido",
+    "protetor de tecido":"Protetor de tecido"
+  };
+  return categories[key]||String(value||"").trim();
+}
+
+
+function todayIsoLocal(){
+  const now=new Date();
+  const year=now.getFullYear();
+  const month=String(now.getMonth()+1).padStart(2,"0");
+  const day=String(now.getDate()).padStart(2,"0");
+  return `${year}-${month}-${day}`;
+}
+
+function validateAttitudeDate(value){
+  if(!value)return true;
+
+  if(value<todayIsoLocal()){
+    toast("A Data Atitude não pode ser anterior ao dia de hoje.");
+    return false;
+  }
+
+  return true;
+}
+
+function canonicalStatus(value){
+  const original=String(value||"").trim();
+  const key=norm(original).replace(/\s+/g," ");
+
+  const statuses={
+    "":"Sem acompanhamento",
+    "sem":"Sem acompanhamento",
+    "sem acompanhamento":"Sem acompanhamento",
+    "agendador":"Agendar",
+    "agendar":"Agendar",
+    "agendado":"Agendado",
+    "em":"Em obra",
+    "em obra":"Em obra",
+    "aguardando pedido total":"Aguardando pedido total"
+  };
+
+  return statuses[key]||original;
+}
+const fmtDate = d => d ? new Intl.DateTimeFormat("pt-BR",{timeZone:"UTC"}).format(new Date(d+"T12:00:00Z")) : "—";
+const fmtDateTime = d => d ? new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short"}).format(new Date(d)) : "—";
+const statusClass = s => norm(s).replace(/\s+/g,"-");
+const badge = s => `<span class="badge ${statusClass(s)}">${s||"Sem acompanhamento"}</span>`;
+const toast = msg => {const t=$("#toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)};
+
+async function api(action, payload={}) {
+  if(!state.apiUrl) throw new Error("demo");
+  if(action==="bootstrap"){
+    const r=await fetch(`${state.apiUrl}?action=bootstrap&t=${Date.now()}`);
+    if(!r.ok) throw new Error("Falha ao carregar");
+    return r.json();
+  }
+  const r=await fetch(state.apiUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
+  if(!r.ok) throw new Error("Falha ao salvar");
+  return r.json();
+}
+
+
+let syncStepTimers=[];
+
+function clearSyncTimers(){
+  syncStepTimers.forEach(timer=>clearTimeout(timer));
+  syncStepTimers=[];
+}
+
+function setSyncStep(stepNumber, progress, message){
+  for(let i=1;i<=4;i++){
+    const el=$("#syncStep"+i);
+    if(!el)continue;
+    el.classList.toggle("done",i<stepNumber);
+    el.classList.toggle("active",i===stepNumber);
+    const icon=el.querySelector(".step-icon");
+    if(icon)icon.textContent=i<stepNumber?"✓":String(i);
+  }
+  $("#syncProgressBar").style.width=progress+"%";
+  if(message)$("#syncMessage").textContent=message;
+}
+
+function showSyncOverlay(){
+  clearSyncTimers();
+  const overlay=$("#syncOverlay");
+  const card=$("#syncCard");
+  card.classList.remove("sync-success");
+  $("#syncLogo").textContent="CL";
+  $("#syncTitle").textContent="Sincronizando dados...";
+  $("#syncMessage").textContent="Aguarde enquanto o ClamiLog consulta a planilha e atualiza o painel.";
+  $("#syncProgressBar").style.width="10%";
+  overlay.classList.add("open");
+  overlay.setAttribute("aria-busy","true");
+
+  $("#refreshBtn").disabled=true;
+  $("#refreshBtn").classList.add("refresh-spinning");
+  $("#newScheduleBtn").disabled=true;
+
+  setSyncStep(1,12,"Conectando ao Google Sheets...");
+
+  syncStepTimers.push(setTimeout(
+    ()=>setSyncStep(2,38,"Lendo os registros da Base Logística..."),
+    650
+  ));
+  syncStepTimers.push(setTimeout(
+    ()=>setSyncStep(3,67,"Atualizando pedidos, categorias e informações operacionais..."),
+    1700
+  ));
+  syncStepTimers.push(setTimeout(
+    ()=>setSyncStep(4,88,"Organizando os dados e preparando o painel..."),
+    3200
+  ));
+}
+
+function finishSyncOverlay(success=true, message=""){
+  clearSyncTimers();
+
+  if(success){
+    setSyncStep(5,100,message||"Sincronização concluída com sucesso.");
+    $("#syncCard").classList.add("sync-success");
+    $("#syncLogo").textContent="✓";
+    $("#syncTitle").textContent="Sincronização concluída!";
+    $("#syncMessage").textContent=message||"Os dados do painel foram atualizados.";
+    for(let i=1;i<=4;i++){
+      const el=$("#syncStep"+i);
+      el.classList.remove("active");
+      el.classList.add("done");
+      const icon=el.querySelector(".step-icon");
+      if(icon)icon.textContent="✓";
+    }
+    setTimeout(()=>hideSyncOverlay(),1100);
+  }else{
+    $("#syncTitle").textContent="Não foi possível sincronizar";
+    $("#syncMessage").textContent=message||"Verifique a conexão e tente novamente.";
+    $("#syncLogo").textContent="!";
+    $("#syncProgressBar").style.width="100%";
+    setTimeout(()=>hideSyncOverlay(),1800);
+  }
+}
+
+function hideSyncOverlay(){
+  $("#syncOverlay").classList.remove("open");
+  $("#syncOverlay").setAttribute("aria-busy","false");
+  $("#refreshBtn").disabled=false;
+  $("#refreshBtn").classList.remove("refresh-spinning");
+  $("#newScheduleBtn").disabled=false;
+}
+
+async function runSync(){
+  showSyncOverlay();
+
+  try{
+    await loadData(true);
+  }catch(error){
+    console.error("Erro ao atualizar o painel:",error);
+    finishSyncOverlay(false,error.message||"Não foi possível atualizar o painel.");
+    toast(error.message||"Não foi possível atualizar o painel.");
+  }
+}
+
+async function loadData(showFeedback=false){
+  let connected=false;
+  try{
+    const data=await api("bootstrap");
+    if(data.error) throw new Error(data.error);
+
+    state.orders=(data.orders||[]).map(o=>({
+      ...o,
+      pedido:normalizarCodigo(o.pedido),
+      codigoProduto:normalizarCodigo(o.codigoProduto),
+      categoria:canonicalCategory(o.categoria),
+      status:canonicalStatus(o.status),
+      produtos:(o.produtos||[]).map(p=>({...p,categoria:canonicalCategory(p.categoria)})),
+      chaveItem:String(o.chaveItem||"").split("|").map(normalizarCodigo).join("|")
+    }));
+    state.schedules=data.schedules||[];
+    state.history=data.history||[];
+    state.statuses=[...new Set((data.statuses||[]).map(canonicalStatus).filter(status=>status&&status!=="Sem acompanhamento"))];
+    state.delayReasons=[...new Set((data.delayReasons||[]).map(value=>String(value||"").trim()).filter(Boolean))];
+
+    $("#connectionBadge").classList.add("online");
+    $("#connectionBadge span").textContent="Google Sheets conectado";
+    connected=true;
+  }catch(e){
+    state.orders=structuredClone(DEMO.orders);
+    state.schedules=structuredClone(DEMO.schedules);
+    state.history=structuredClone(DEMO.history);
+    state.statuses=["Agendado","Agendar","Em obra","Aguardando pedido total"];
+    state.delayReasons=["Atraso de fábrica","Aguardando cliente","Problema de transporte"];
+
+    $("#connectionBadge").classList.remove("online");
+    $("#connectionBadge span").textContent=state.apiUrl?"Falha na conexão":"Modo demonstração";
+  }
+
+  renderAll();
+
+  if(showFeedback){
+    if(connected){
+      finishSyncOverlay(true,"Base Logística reorganizada e painel atualizado.");
+      toast("Sincronização concluída.");
+    }else{
+      finishSyncOverlay(false,state.apiUrl
+        ?"Não foi possível acessar o Google Sheets. O painel foi aberto em demonstração."
+        :"Painel atualizado no modo demonstração.");
+    }
+  }
+}
+
+
+
+function resolveAttitudeDateForView(group){
+  const categoryFilter=$("#categoryFilter")?.value||"";
+
+  if(
+    categoryFilter==="Previsão"
+  ){
+    return group.dataAtitudePrevisao||"";
+  }
+
+  if(
+    categoryFilter==="Agendamento + Pronta Entrega" ||
+    categoryFilter==="Agendamento" ||
+    categoryFilter==="Pronta Entrega"
+  ){
+    return group.dataAtitudeAgendamento||"";
+  }
+
+  const dates=[
+    group.dataAtitudeAgendamento,
+    group.dataAtitudePrevisao
+  ].filter(Boolean);
+
+  const unique=[...new Set(dates)];
+
+  return unique.length===1 ? unique[0] : "";
+}
+
+function getGroupedOrders(){
+  const groups=new Map();
+
+  state.orders.forEach(item=>{
+    const pedido=normalizarCodigo(item.pedido);
+    if(!pedido)return;
+
+    if(!groups.has(pedido)){
+      groups.set(pedido,{
+        pedido,
+        cliente:item.cliente||"",
+        codigoCliente:item.codigoCliente||"",
+        loja:item.loja||"",
+        nomeLoja:item.nomeLoja||"",
+        tipoPedido:item.tipoPedido||"",
+        tipoTransporte:item.tipoTransporte||"",
+        dataOriginal:item.dataOriginal||"",
+        previsao:item.previsao||"",
+        cidade:item.cidade||"",
+        telefone:item.telefone||"",
+        endereco:item.endereco||"",
+        enderecoCompleto:item.enderecoCompleto||item.endereco||"",
+        vendedor:item.vendedor||"",
+        status:item.status||"Sem acompanhamento",
+        dataAtitudeAgendamento:item.dataAtitudeAgendamento||"",
+        dataAtitudePrevisao:item.dataAtitudePrevisao||"",
+        dataPosicionarCliente:item.dataPosicionarCliente||"",
+        posicionadoCliente:item.posicionadoCliente||"Não",
+        dataAtitude:item.dataAtitude||"",
+        observacoes:item.observacoes||"",
+        itens:[],
+        chaves:[],
+        categorias:[]
+      });
+    }
+
+    const group=groups.get(pedido);
+    group.itens.push(item);
+    group.chaves.push(item.chaveItem);
+
+    const itemCategories=[
+      item.categoria,
+      ...(item.produtos||[]).map(product=>product&&product.categoria)
+    ]
+      .map(canonicalCategory)
+      .filter(Boolean);
+
+    itemCategories.forEach(category=>{
+      if(!group.categorias.includes(category)){
+        group.categorias.push(category);
+      }
+    });
+
+    if(!group.cliente && item.cliente)group.cliente=item.cliente;
+    if(!group.loja && item.loja)group.loja=item.loja;
+    if(!group.nomeLoja && item.nomeLoja)group.nomeLoja=item.nomeLoja;
+    if(!group.tipoPedido && item.tipoPedido)group.tipoPedido=item.tipoPedido;
+    if(!group.tipoTransporte && item.tipoTransporte)group.tipoTransporte=item.tipoTransporte;
+    if(!group.dataOriginal && item.dataOriginal)group.dataOriginal=item.dataOriginal;
+    if(!group.previsao && item.previsao)group.previsao=item.previsao;
+    if(!group.dataAtitudeAgendamento && item.dataAtitudeAgendamento){
+      group.dataAtitudeAgendamento=item.dataAtitudeAgendamento;
+    }
+    if(!group.dataAtitudePrevisao && item.dataAtitudePrevisao){
+      group.dataAtitudePrevisao=item.dataAtitudePrevisao;
+    }
+
+    const itemPositionDate=sortableDateValue(item.dataPosicionarCliente);
+    const groupPositionDate=sortableDateValue(group.dataPosicionarCliente);
+
+    if(
+      item.dataPosicionarCliente &&
+      (
+        !group.dataPosicionarCliente ||
+        itemPositionDate<groupPositionDate
+      )
+    ){
+      group.dataPosicionarCliente=item.dataPosicionarCliente;
+    }
+
+    if(
+      canonicalCategory(item.categoria)==="Previsão" &&
+      norm(item.posicionadoCliente||"não")!=="sim"
+    ){
+      group.posicionadoCliente="Não";
+    }
+
+    if(!group.cidade && item.cidade)group.cidade=item.cidade;
+  });
+
+  return [...groups.values()].map(group=>{
+    const statuses=[...new Set(group.itens.map(i=>i.status||"Sem acompanhamento"))];
+    group.status=statuses.length===1?statuses[0]:"Status divergente";
+    const categorias=[...new Set(group.categorias.filter(Boolean))];
+    group.categoria=categorias.length===1?categorias[0]:(categorias.length>1?"Categorias diversas":"Sem categoria");
+    group.quantidadeItens=group.itens.length;
+    group.dataAtitude=resolveAttitudeDateForView(group);
+    return group;
+  });
+}
+
+function renderAll(){renderMetrics();renderDashboardLists();renderFilters();renderOrders();renderHistory();populateOrderSelect();populateStatusSelect()}
+function renderMetrics(){
+  const groupedOrders=getGroupedOrders();
+  const counts={};
+  groupedOrders.forEach(o=>counts[o.status||"Sem acompanhamento"]=(counts[o.status||"Sem acompanhamento"]||0)+1);
+  const pending=groupedOrders.filter(o=>!o.status||norm(o.status)==="sem acompanhamento").length;
+  const scheduled=groupedOrders.filter(o=>norm(o.status).includes("agend")).length;
+  const delivered=groupedOrders.filter(o=>norm(o.status).includes("entreg")).length;
+  const metrics=[
+    ["Itens na Base Logística",new Set(state.orders.map(o=>o.pedido)).size,"Base permanente"],
+    ["Pendentes",pending,"Exigem acompanhamento"],
+    ["Agendados",scheduled,"Com entrega programada"],
+    ["Entregues",delivered,"Concluídos na base atual"]
+  ];
+  $("#metricCards").innerHTML=metrics.map(m=>`<div class="metric"><span>${m[0]}</span><strong>${m[1]}</strong><small>${m[2]}</small></div>`).join("");
+}
+function renderDashboardLists(){
+  const recent=[...state.history].sort((a,b)=>String(b.dataHora).localeCompare(String(a.dataHora))).slice(0,5);
+  $("#upcomingList").innerHTML=recent.length?recent.map(h=>`<div class="list-item"><div><strong>${h.pedido} · ${h.acao||"Acompanhamento atualizado"}</strong><span>${fmtDateTime(h.dataHora)}</span></div>${badge(h.statusNovo||"Sem acompanhamento")}</div>`).join(""):`<div class="empty">Nenhuma movimentação logística registrada.</div>`;
+  const attention=getGroupedOrders().filter(o=>!o.status||norm(o.status)==="sem acompanhamento").slice(0,5);
+  $("#attentionList").innerHTML=attention.length?attention.map(o=>`<div class="list-item"><div><strong>${String(o.pedido).replace(/,00$/,'').replace(/\.00$/,'')} · ${o.cliente}</strong><span>Previsão ${fmtDate(o.previsao)} · ${o.loja}</span></div><button class="table-action" onclick="openSchedule('${String(o.pedido).replace(/,00$/,'').replace(/\.00$/,'')}')">Atualizar</button></div>`).join(""):`<div class="empty">Nenhum pedido pendente.</div>`;
+}
+function renderFilters(){
+  const statuses=(state.statuses.length?state.statuses:[...new Set(getGroupedOrders().map(o=>o.status).filter(Boolean))]).sort();
+  $("#statusFilter").innerHTML='<option value="">Todos os status</option>'+statuses.map(x=>`<option>${escapeHtml(x)}</option>`).join("");
+
+  const cities=[...new Set(state.orders.map(o=>o.cidade).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,"pt-BR"));
+
+  const transports=[...new Set(state.orders.map(o=>o.tipoTransporte).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,"pt-BR"));
+
+  $("#cityFilter").innerHTML=
+    '<option value="">Todas as cidades</option>'+
+    cities.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join("");
+
+  $("#transportFilter").innerHTML=
+    '<option value="">Todos os transportes</option>'+
+    transports.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join("");
+}
+
+function itemCategories(item){
+  return [
+    item.categoria,
+    ...(item.produtos||[]).map(product=>product&&product.categoria)
+  ]
+    .map(canonicalCategory)
+    .filter(Boolean);
+}
+
+function matchesCategoryFilter(item, category){
+  const categories=itemCategories(item);
+
+  if(category==="Agendamento + Pronta Entrega"){
+    return categories.includes("Agendamento") ||
+           categories.includes("Pronta Entrega");
+  }
+
+  return categories.includes(canonicalCategory(category));
+}
+
+
+function isPastDate(value){
+  const dateValue=sortableDateValue(value);
+  const todayValue=sortableDateValue(todayIsoLocal());
+
+  if(!Number.isFinite(dateValue)||!Number.isFinite(todayValue)){
+    return false;
+  }
+
+  return dateValue<todayValue;
+}
+
+function dateWithDelayWarning(value){
+  if(!value)return "—";
+  const warning=isPastDate(value)
+    ?`<div class="delay-warning">Atrasado</div>`
+    :"";
+  return `<div class="date-cell">${fmtDate(value)}${warning}</div>`;
+}
+
+function matchesDelayFilter(order,filterValue){
+  if(!filterValue)return true;
+
+  const originalLate=isPastDate(order.dataOriginal);
+  const systemLate=isPastDate(order.previsao);
+
+  if(filterValue==="original")return originalLate;
+  if(filterValue==="system")return systemLate;
+  if(filterValue==="any")return originalLate||systemLate;
+  if(filterValue==="none")return !originalLate&&!systemLate;
+
+  return true;
+}
+
+
+function resolveItemAttitudeDate(item){
+  const category=canonicalCategory(item.categoria);
+
+  if(category==="Previsão"){
+    return item.dataAtitudePrevisao||item.dataAtitude||"";
+  }
+
+  if(category==="Agendamento"||category==="Pronta Entrega"){
+    return item.dataAtitudeAgendamento||item.dataAtitude||"";
+  }
+
+  return item.dataAtitude||"";
+}
+
+function getItemProduct(item){
+  const product=(item.produtos||[])[0]||{};
+
+  return {
+    codigo:normalizarCodigo(product.codigoProduto||item.codigoProduto||""),
+    descricao:product.descricao||item.descricaoProduto||item.descricao||"—"
+  };
+}
+
+function getVisibleItems(){
+  const q=norm($("#searchInput").value);
+  const st=$("#statusFilter").value;
+  const category=$("#categoryFilter").value;
+  const delay=$("#delayFilter").value;
+  const city=$("#cityFilter").value;
+  const transport=$("#transportFilter").value;
+
+  return state.orders.filter(item=>{
+    const product=getItemProduct(item);
+    const searchable=norm([
+      item.pedido,
+      product.codigo,
+      product.descricao,
+      item.cliente,
+      item.tipoPedido,
+      item.cidade,
+      item.tipoTransporte
+    ].join(" "));
+
+    return (!q||searchable.includes(q))
+      &&(!st||canonicalStatus(item.status)===canonicalStatus(st))
+      &&(!category||matchesCategoryFilter(item,category))
+      &&matchesDelayFilter(item,delay)
+      &&(!city||item.cidade===city)
+      &&(!transport||item.tipoTransporte===transport)
+      &&matchesSupervisorQuickFilter(item);
+  });
+}
+
+function matchesSupervisorQuickFilter(item){
+  if(!supervisorQuickFilter)return true;
+
+  if(supervisorQuickFilter==="overdue"){
+    return isPastDate(item.dataOriginal);
+  }
+
+  if(supervisorQuickFilter==="no-attitude"){
+    return !String(item.dataAtitudeSupervisao||"").trim();
+  }
+
+  if(supervisorQuickFilter==="position-pending"){
+    return canonicalCategory(item.categoria)==="Previsão" &&
+      norm(item.posicionadoCliente||"não")!=="sim";
+  }
+
+  if(supervisorQuickFilter==="position-due"){
+    return canonicalCategory(item.categoria)==="Previsão" &&
+      norm(item.posicionadoCliente||"não")!=="sim" &&
+      Boolean(item.dataPosicionarCliente) &&
+      item.dataPosicionarCliente<=todayIsoLocal();
+  }
+
+  return true;
+}
+
+
+
+
+function attitudeSortHeader(){
+  const isAscending=state.attitudeSortDirection!=="desc";
+  const arrow=isAscending?"↑":"↓";
+  const title=isAscending
+    ?"Clique para ordenar da data mais recente para a mais antiga; sem data ficará primeiro"
+    :"Clique para ordenar da data mais antiga para a mais recente; sem data ficará por último";
+
+  return `
+    <button type="button"
+            class="attitude-sort-button"
+            title="${title}"
+            aria-label="${title}"
+            onclick="toggleAttitudeSort()">
+      <span>Status / Data</span>
+      <strong aria-hidden="true">${arrow}</strong>
+    </button>`;
+}
+
+function toggleAttitudeSort(){
+  state.attitudeSortDirection=
+    state.attitudeSortDirection==="desc"?"asc":"desc";
+
+  ordersCurrentPage=1;
+  renderOrders();
+}
+
+function sortableDateValue(value){
+  const text=String(value||"").trim();
+  if(!text)return Number.POSITIVE_INFINITY;
+
+  const iso=text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(iso){
+    return Number(`${iso[1]}${iso[2]}${iso[3]}`);
+  }
+
+  const br=text.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if(br){
+    return Number(`${br[3]}${br[2]}${br[1]}`);
+  }
+
+  const parsed=new Date(text);
+  return Number.isNaN(parsed.getTime())
+    ?Number.POSITIVE_INFINITY
+    :Number(
+      `${parsed.getFullYear()}${String(parsed.getMonth()+1).padStart(2,"0")}${String(parsed.getDate()).padStart(2,"0")}`
+    );
+}
+
+function sortByAttitudeDate(rows,dateResolver){
+  const descending=state.attitudeSortDirection==="desc";
+
+  return [...rows].sort((a,b)=>{
+    const rawA=String(dateResolver(a)||"").trim();
+    const rawB=String(dateResolver(b)||"").trim();
+    const emptyA=!rawA;
+    const emptyB=!rawB;
+
+    if(emptyA!==emptyB){
+      return descending
+        ?(emptyA?-1:1)
+        :(emptyA?1:-1);
+    }
+
+    const dateA=sortableDateValue(rawA);
+    const dateB=sortableDateValue(rawB);
+
+    if(dateA!==dateB){
+      return descending?dateB-dateA:dateA-dateB;
+    }
+
+    const originalA=sortableDateValue(a.dataOriginal);
+    const originalB=sortableDateValue(b.dataOriginal);
+
+    if(originalA!==originalB){
+      return descending?originalB-originalA:originalA-originalB;
+    }
+
+    const pedidoCompare=String(a.pedido||"").localeCompare(
+      String(b.pedido||""),
+      undefined,
+      {numeric:true}
+    );
+
+    if(pedidoCompare!==0){
+      return descending?-pedidoCompare:pedidoCompare;
+    }
+
+    const itemCompare=String(a.codigoProduto||a.chaveItem||"").localeCompare(
+      String(b.codigoProduto||b.chaveItem||""),
+      undefined,
+      {numeric:true}
+    );
+
+    return descending?-itemCompare:itemCompare;
+  });
+}
+
+function paginateRows(rows){
+  const total=rows.length;
+  const totalPages=Math.max(1,Math.ceil(total/ordersPageSize));
+
+  if(ordersCurrentPage>totalPages){
+    ordersCurrentPage=totalPages;
+  }
+
+  const start=(ordersCurrentPage-1)*ordersPageSize;
+  const end=Math.min(start+ordersPageSize,total);
+
+  lastFilteredOrdersCount=total;
+
+  return {
+    rows:rows.slice(start,end),
+    total,
+    totalPages,
+    start,
+    end
+  };
+}
+
+function updatePagination(pagination){
+  const summary=$("#paginationSummary");
+  const indicator=$("#pageIndicator");
+  const previous=$("#previousPage");
+  const next=$("#nextPage");
+
+  if(!summary||!indicator||!previous||!next)return;
+
+  summary.textContent=pagination.total
+    ?`Exibindo ${pagination.start+1}–${pagination.end} de ${pagination.total}`
+    :"Nenhum registro encontrado";
+
+  indicator.textContent=`Página ${ordersCurrentPage} de ${pagination.totalPages}`;
+  previous.disabled=ordersCurrentPage<=1;
+  next.disabled=ordersCurrentPage>=pagination.totalPages;
+}
+
+function resetOrdersPage(){
+  ordersCurrentPage=1;
+}
+
+
+function uniqueOrdersFromItems(items){
+  const map=new Map();
+
+  items.forEach(item=>{
+    const pedido=normalizarCodigo(item.pedido);
+    const category=canonicalCategory(item.categoria)||"Sem categoria";
+    const key=`${pedido}||${category}`;
+
+    if(!map.has(key)){
+      map.set(key,{
+        pedido,
+        category,
+        cliente:item.cliente||"",
+        loja:item.loja||"",
+        vendedor:item.vendedor||"",
+        dataOriginal:item.dataOriginal||"",
+        dataAtitudeSupervisao:item.dataAtitudeSupervisao||"",
+        dataPosicionarCliente:item.dataPosicionarCliente||"",
+        posicionadoCliente:item.posicionadoCliente||"Não",
+        statusSupervisao:item.statusSupervisao||"",
+        itens:[]
+      });
+    }
+
+    const order=map.get(key);
+    order.itens.push(item);
+
+    if(!order.dataOriginal&&item.dataOriginal){
+      order.dataOriginal=item.dataOriginal;
+    }
+
+    if(!order.dataAtitudeSupervisao&&item.dataAtitudeSupervisao){
+      order.dataAtitudeSupervisao=item.dataAtitudeSupervisao;
+    }
+
+    if(
+      category==="Previsão" &&
+      norm(item.posicionadoCliente||"não")!=="sim"
+    ){
+      order.posicionadoCliente="Não";
+    }
+  });
+
+  return [...map.values()];
+}
+
+function supervisorMetricCard(label,value,detail,filter,kind=""){
+  return `
+    <button type="button"
+            class="supervisor-metric ${kind}"
+            data-supervisor-filter="${filter||""}">
+      <span>${label}</span>
+      <strong>${value}</strong>
+      <small>${detail}</small>
+    </button>`;
+}
+
+function renderSupervisorDashboard(){
+  const allItems=state.orders||[];
+
+  const items=allItems.filter(item=>{
+    const typeMatches=!supervisorDashboardTypeFilter ||
+      String(item.tipoPedido||"Sem tipo").trim()===supervisorDashboardTypeFilter;
+
+    const categoryMatches=!supervisorDashboardCategoryFilter ||
+      (canonicalCategory(item.categoria)||"Sem categoria")===
+        supervisorDashboardCategoryFilter;
+
+    return typeMatches&&categoryMatches;
+  });
+
+  const orders=uniqueOrdersFromItems(items);
+  const totalOrders=new Set(items.map(item=>normalizarCodigo(item.pedido))).size;
+  const overdueOrders=new Set(
+    items.filter(item=>isPastDate(item.dataOriginal))
+      .map(item=>normalizarCodigo(item.pedido))
+  ).size;
+  const noAttitudeOrders=new Set(
+    items.filter(item=>!String(item.dataAtitudeSupervisao||"").trim())
+      .map(item=>normalizarCodigo(item.pedido))
+  ).size;
+
+  const forecastOrders=orders.filter(order=>order.category==="Previsão");
+  const positionedOrders=forecastOrders.filter(
+    order=>norm(order.posicionadoCliente||"não")==="sim"
+  );
+  const pendingPositionOrders=forecastOrders.filter(
+    order=>norm(order.posicionadoCliente||"não")!=="sim"
+  );
+  const duePositionOrders=pendingPositionOrders.filter(
+    order=>order.dataPosicionarCliente &&
+      order.dataPosicionarCliente<=todayIsoLocal()
+  );
+  const activeFilters=[];
+
+  if(supervisorDashboardTypeFilter){
+    activeFilters.push(`
+      <button type="button"
+              class="supervisor-filter-chip"
+              data-clear-dashboard-filter="type">
+        Tipo Pedido: ${escapeHtml(supervisorDashboardTypeFilter)}
+        <span aria-hidden="true">×</span>
+      </button>`);
+  }
+
+  if(supervisorDashboardCategoryFilter){
+    activeFilters.push(`
+      <button type="button"
+              class="supervisor-filter-chip"
+              data-clear-dashboard-filter="category">
+        Categoria: ${escapeHtml(supervisorDashboardCategoryFilter)}
+        <span aria-hidden="true">×</span>
+      </button>`);
+  }
+
+  const activeFiltersElement=$("#supervisorActiveFilters");
+
+  if(activeFilters.length){
+    activeFiltersElement.hidden=false;
+    activeFiltersElement.innerHTML=`
+      <span>Filtros ativos:</span>
+      ${activeFilters.join("")}
+      <button type="button"
+              class="supervisor-clear-filters"
+              data-clear-dashboard-filter="all">
+        Limpar filtros
+      </button>`;
+  }else{
+    activeFiltersElement.hidden=true;
+    activeFiltersElement.innerHTML="";
+  }
+
+
+  const orderTypeMap=new Map();
+
+  items.forEach(item=>{
+    const orderType=String(item.tipoPedido||"Sem tipo").trim()||"Sem tipo";
+    const pedido=normalizarCodigo(item.pedido);
+
+    if(!orderTypeMap.has(orderType)){
+      orderTypeMap.set(orderType,{
+        pedidos:new Set(),
+        itens:0
+      });
+    }
+
+    const entry=orderTypeMap.get(orderType);
+
+    if(pedido){
+      entry.pedidos.add(pedido);
+    }
+
+    entry.itens+=1;
+  });
+
+  const orderTypeRows=[...orderTypeMap.entries()]
+    .map(([tipo,data])=>({
+      tipo,
+      pedidos:data.pedidos.size,
+      itens:data.itens
+    }))
+    .sort((a,b)=>{
+      if(a.pedidos!==b.pedidos)return b.pedidos-a.pedidos;
+      if(a.itens!==b.itens)return b.itens-a.itens;
+      return a.tipo.localeCompare(b.tipo,"pt-BR");
+    });
+
+  const categoryMap=new Map();
+
+  items.forEach(item=>{
+    const category=canonicalCategory(item.categoria)||"Sem categoria";
+    const pedido=normalizarCodigo(item.pedido);
+
+    if(!categoryMap.has(category)){
+      categoryMap.set(category,{
+        pedidos:new Set(),
+        itens:0
+      });
+    }
+
+    const entry=categoryMap.get(category);
+
+    if(pedido){
+      entry.pedidos.add(pedido);
+    }
+
+    entry.itens+=1;
+  });
+
+  const categoryRows=[...categoryMap.entries()]
+    .map(([categoria,data])=>({
+      categoria,
+      pedidos:data.pedidos.size,
+      itens:data.itens
+    }))
+    .sort((a,b)=>{
+      if(a.pedidos!==b.pedidos)return b.pedidos-a.pedidos;
+      if(a.itens!==b.itens)return b.itens-a.itens;
+      return a.categoria.localeCompare(b.categoria,"pt-BR");
+    });
+
+  const maxCategoryCount=Math.max(
+    1,
+    ...categoryRows.map(row=>row.pedidos)
+  );
+
+  const orderTypeCompact=orderTypeRows.length
+    ?orderTypeRows.map(row=>`
+      <button type="button"
+              class="order-type-compact-row ${
+                supervisorDashboardTypeFilter===row.tipo?"is-selected":""
+              }"
+              data-dashboard-order-type="${escapeHtml(row.tipo)}"
+              title="Filtrar dashboard por ${escapeHtml(row.tipo)}">
+        <span>${escapeHtml(row.tipo)}</span>
+        <strong>
+          ${row.pedidos}
+          <small>/</small>
+          ${row.itens}
+        </strong>
+      </button>`).join("")
+    :`<div class="order-type-summary-empty">Nenhum Tipo Pedido informado.</div>`;
+
+  const categorySummary=categoryRows.length
+    ?categoryRows.map(row=>{
+      const width=Math.max(
+        row.pedidos>0?4:0,
+        Math.round((row.pedidos/maxCategoryCount)*100)
+      );
+
+      return `
+        <button type="button"
+                class="category-summary-row ${
+                  supervisorDashboardCategoryFilter===row.categoria
+                    ?"is-selected":""
+                }"
+                data-dashboard-category-filter="${escapeHtml(row.categoria)}"
+                title="Filtrar dashboard por ${escapeHtml(row.categoria)}">
+          <div class="category-summary-top">
+            <span>${escapeHtml(row.categoria)}</span>
+            <strong class="category-summary-count">
+              <b>${row.pedidos}</b>
+              <small>pedidos</small>
+              <em>/</em>
+              <b>${row.itens}</b>
+              <small>itens</small>
+            </strong>
+          </div>
+          <div class="category-summary-track"
+               aria-label="${escapeHtml(row.categoria)}: ${row.pedidos} pedidos e ${row.itens} itens">
+            <div style="width:${width}%"></div>
+          </div>
+        </button>`;
+    }).join("")
+    :`<div class="order-type-summary-empty">Nenhuma categoria encontrada.</div>`;
+
+  $("#supervisorMetrics").innerHTML=[
+    `
+      <div class="supervisor-metric supervisor-metric-total">
+        <button type="button"
+                class="supervisor-total-left"
+                data-supervisor-filter="">
+          <div class="supervisor-total-main">
+            <span>Total</span>
+            <strong>${totalOrders}</strong>
+            <small>pedidos</small>
+            <b>${items.length}</b>
+            <small>itens</small>
+          </div>
+
+          <div class="order-type-compact">
+            <div class="order-type-compact-title">
+              <span>Tipo Pedido</span>
+              <small>Ped. / Itens</small>
+            </div>
+            ${orderTypeCompact}
+          </div>
+        </button>
+
+        <div class="category-summary">
+          <div class="category-summary-title">
+            <span>Por Categoria</span>
+            <small>Pedidos / Itens</small>
+          </div>
+          ${categorySummary}
+        </div>
+      </div>
+    `,
+    supervisorMetricCard(
+      "Pedidos atrasados",
+      overdueOrders,
+      "Data Original vencida",
+      "overdue",
+      overdueOrders?"is-warning":""
+    ),
+    supervisorMetricCard(
+      "Sem atitude do supervisor",
+      noAttitudeOrders,
+      "Sem Data Atitude Supervisão",
+      "no-attitude",
+      noAttitudeOrders?"is-danger":""
+    ),
+    supervisorMetricCard(
+      "Posicionamento pendente",
+      pendingPositionOrders.length,
+      `${duePositionOrders.length} vencido(s) ou para hoje`,
+      "position-pending",
+      duePositionOrders.length?"is-danger":""
+    )
+  ].join("");
+
+  const categoryOrder=[
+    "Agendamento",
+    "Previsão",
+    "Pronta Entrega",
+    "Tecido",
+    "Protetor de tecido"
+  ];
+
+  const categoryCounts=new Map();
+  orders.forEach(order=>{
+    categoryCounts.set(
+      order.category,
+      (categoryCounts.get(order.category)||0)+1
+    );
+  });
+
+
+  const positionedPercent=forecastOrders.length
+    ?Math.round((positionedOrders.length/forecastOrders.length)*100)
+    :0;
+
+  $("#supervisorPositioning").innerHTML=`
+    <div class="supervisor-position-summary">
+      <div>
+        <span>Total em Previsão</span>
+        <strong>${forecastOrders.length}</strong>
+      </div>
+      <div>
+        <span>Posicionados</span>
+        <strong>${positionedOrders.length}</strong>
+      </div>
+      <div>
+        <span>Pendentes</span>
+        <strong>${pendingPositionOrders.length}</strong>
+      </div>
+    </div>
+
+    <div class="supervisor-progress" aria-label="${positionedPercent}% dos pedidos posicionados">
+      <div style="width:${positionedPercent}%"></div>
+    </div>
+    <p class="supervisor-progress-label">${positionedPercent}% posicionados</p>
+
+    <button type="button"
+            class="supervisor-position-action"
+            data-supervisor-filter="position-due">
+      Ver ${duePositionOrders.length} posicionamento(s) vencido(s) ou para hoje
+    </button>`;
+
+  const criticalMap=new Map();
+
+  items.forEach(item=>{
+    const pedido=normalizarCodigo(item.pedido);
+    if(!pedido)return;
+
+    if(!criticalMap.has(pedido)){
+      criticalMap.set(pedido,{
+        pedido,
+        cliente:item.cliente||"Cliente não informado",
+        category:canonicalCategory(item.categoria)||"Sem categoria",
+        reasons:new Set(),
+        priority:0
+      });
+    }
+
+    const critical=criticalMap.get(pedido);
+
+    if(isPastDate(item.dataOriginal)){
+      critical.reasons.add("Data Original vencida");
+      critical.priority=Math.max(critical.priority,2);
+    }
+
+    if(!String(item.dataAtitudeSupervisao||"").trim()){
+      critical.reasons.add("Sem atitude do supervisor");
+      critical.priority=Math.max(critical.priority,2);
+    }
+
+    if(
+      canonicalCategory(item.categoria)==="Previsão" &&
+      norm(item.posicionadoCliente||"não")!=="sim" &&
+      item.dataPosicionarCliente &&
+      item.dataPosicionarCliente<=todayIsoLocal()
+    ){
+      critical.reasons.add(
+        `Cliente não posicionado — ${fmtDate(item.dataPosicionarCliente)}`
+      );
+      critical.priority=3;
+    }
+
+    if(
+      item.motivoAtraso &&
+      norm(item.motivoAtrasoValidado||"")!=="sim"
+    ){
+      critical.reasons.add("Motivo de atraso não validado");
+      critical.priority=Math.max(critical.priority,1);
+    }
+  });
+
+  const criticalOrders=[...criticalMap.values()]
+    .filter(order=>order.reasons.size)
+    .sort((a,b)=>{
+      if(a.priority!==b.priority)return b.priority-a.priority;
+      return a.pedido.localeCompare(b.pedido,undefined,{numeric:true});
+    });
+
+  $("#supervisorCriticalCount").textContent=
+    `${criticalOrders.length} pedido(s)`;
+
+  $("#supervisorCriticalList").innerHTML=criticalOrders.length
+    ?criticalOrders.slice(0,20).map(order=>`
+      <button type="button"
+              class="supervisor-critical-item"
+              data-dashboard-pedido="${escapeHtml(order.pedido)}">
+        <div class="supervisor-critical-main">
+          <div class="supervisor-critical-title">
+            <strong>Pedido ${escapeHtml(order.pedido)}</strong>
+            ${badge(order.category)}
+          </div>
+          <span>${escapeHtml(order.cliente)}</span>
+          <small>${[...order.reasons].map(escapeHtml).join(" • ")}</small>
+        </div>
+        <b aria-hidden="true">Ver ›</b>
+      </button>`).join("")
+    :`<div class="empty">Nenhum pedido crítico identificado.</div>`;
+
+}
+
+function openSupervisorTableWithFilter(filter){
+  closeSupervisorDashboard();
+  openAllOrders();
+  supervisorQuickFilter=filter||"";
+  resetOrdersPage();
+  renderOrders();
+}
+
+function openSupervisorDashboard(){
+  supervisorPreviousView={
+    mode:ordersDisplayMode,
+    category:groupedScreenContext,
+    title:$("#pageTitle").textContent||"Acompanhamento de pedidos",
+    subtitle:$("#pageSubtitle").textContent||""
+  };
+
+  supervisorDashboardOpen=true;
+  supervisorQuickFilter="";
+  $("#supervisorDashboard").hidden=false;
+  $("#ordersTableArea").hidden=true;
+  $("#supervisorDashboardBtn").textContent="Ver tabela";
+  $("#pageTitle").textContent="Dashboard do Supervisor";
+  $("#pageSubtitle").textContent="Indicadores operacionais de todas as categorias";
+  renderSupervisorDashboard();
+}
+
+function closeSupervisorDashboard(){
+  supervisorDashboardOpen=false;
+  supervisorDashboardTypeFilter="";
+  supervisorDashboardCategoryFilter="";
+  $("#supervisorDashboard").hidden=true;
+  $("#ordersTableArea").hidden=false;
+  $("#supervisorDashboardBtn").textContent="Dashboard";
+}
+
+function toggleSupervisorDashboard(){
+  if(!supervisorDashboardOpen){
+    openSupervisorDashboard();
+    return;
+  }
+
+  const previous={...supervisorPreviousView};
+  closeSupervisorDashboard();
+
+  if(previous.mode==="grouped"&&previous.category){
+    openCategory(previous.category);
+    return;
+  }
+
+  openAllOrders();
+}
+
+function renderOrders(){
+  if(ordersDisplayMode==="items"){
+    renderOrdersByItem();
+  }else{
+    renderOrdersGrouped();
+  }
+}
+
+
+function compactDateLine(label,value){
+  const formatted=value?fmtDate(value):"—";
+  const delayed=value&&isPastDate(value)
+    ?` <strong class="compact-delay">ATRASADO</strong>`
+    :"";
+
+  return `<div class="compact-meta"><span>${label}:</span> ${formatted}${delayed}</div>`;
+}
+
+
+function getSituacaoLiberacaoPV(item){
+  return String(
+    item.situacaoLiberacaoPV ??
+    item.situacaoLiberacaoPv ??
+    item.situacaoLiberacao ??
+    item["Situação Liberação PV"] ??
+    item["Situacao Liberacao PV"] ??
+    ""
+  ).trim();
+}
+
+function compactTypeInfo(item){
+  const category=canonicalCategory(item.categoria)||"Sem categoria";
+  const isReadyDelivery=category==="Pronta Entrega";
+  const isForecast=category==="Previsão";
+  const releaseStatus=getSituacaoLiberacaoPV(item);
+  const positionDate=item.dataPosicionarCliente
+    ?fmtDate(item.dataPosicionarCliente)
+    :"Sem data";
+  const positioned=norm(item.posicionadoCliente||"não")==="sim";
+
+  return `
+    <div class="compact-type-cell">
+      ${badge(category)}
+
+      ${isReadyDelivery&&releaseStatus
+        ?`<div class="pv-release-status" title="Situação Liberação PV: ${escapeHtml(releaseStatus)}">
+            <span class="pv-release-dot"></span>
+            <span>${escapeHtml(releaseStatus)}</span>
+          </div>`
+        :""}
+
+      ${isForecast
+        ?`<div class="item-positioning-info">
+            <div>
+              <span>Posicionar cliente</span>
+              <strong>${positionDate}</strong>
+            </div>
+            <div>
+              <span>Posicionado</span>
+              <strong class="${positioned?"is-yes":"is-no"}">
+                ${positioned?"Sim":"Não"}
+              </strong>
+            </div>
+          </div>`
+        :""}
+    </div>`;
+}
+
+function compactOrderStatusTooltip(label,status,date,observation){
+  const safeStatus=escapeHtml(status||"Sem acompanhamento");
+  const safeDate=date?fmtDate(date):"Sem data";
+  const safeObservation=escapeHtml(observation||"Sem observação");
+
+  return `
+    <div class="order-status-tooltip">
+      <strong>${escapeHtml(label)}</strong>
+      <span>Status: ${safeStatus}</span>
+      <span>Data da atitude: ${safeDate}</span>
+      <span>Observação: ${safeObservation}</span>
+    </div>`;
+}
+
+function compactOrderStatusLine(label,status,date,observation,type){
+  const text=escapeHtml(status||"Sem acompanhamento");
+
+  return `
+    <div class="compact-order-status compact-order-status-${type}" tabindex="0">
+      <span class="compact-order-status-dot"></span>
+      <span><strong>${escapeHtml(label)}:</strong> ${text}</span>
+      ${compactOrderStatusTooltip(label,status,date,observation)}
+    </div>`;
+}
+
+
+function compactCommercialInfo(data){
+  const storeName=String(data.nomeLoja||data.loja||"").trim();
+  const seller=String(data.vendedor||"").trim();
+  const parts=[];
+
+  if(storeName)parts.push(storeName);
+  if(seller)parts.push(seller);
+
+  if(!parts.length)return "";
+
+  const fullText=parts.join(" • ");
+
+  return `
+    <div class="compact-commercial-info" title="${escapeHtml(fullText)}">
+      ${escapeHtml(fullText)}
+    </div>`;
+}
+
+
+async function copyOrderNumber(orderNumber){
+  const pedido=normalizarCodigo(orderNumber);
+
+  try{
+    if(navigator.clipboard&&window.isSecureContext){
+      await navigator.clipboard.writeText(pedido);
+    }else{
+      const temp=document.createElement("textarea");
+      temp.value=pedido;
+      temp.setAttribute("readonly","");
+      temp.style.position="fixed";
+      temp.style.left="-9999px";
+      document.body.appendChild(temp);
+      temp.select();
+      const copied=document.execCommand("copy");
+      document.body.removeChild(temp);
+      if(!copied)throw new Error("Falha ao copiar");
+    }
+
+    toast(`Pedido ${pedido} copiado para a área de transferência.`);
+  }catch(error){
+    toast(`Não foi possível copiar o pedido ${pedido}.`);
+  }
+}
+
+function copyOrderButton(orderNumber,extraClass=""){
+  const pedido=normalizarCodigo(orderNumber);
+
+  return `
+    <button type="button"
+            class="copy-order-btn ${extraClass}"
+            title="Copiar número do pedido"
+            aria-label="Copiar pedido ${pedido}"
+            onclick="event.stopPropagation();copyOrderNumber('${pedido}')">
+      <span aria-hidden="true">⧉</span>
+    </button>`;
+}
+
+function compactOrderInfo(data,withStar=false,showOperationalStatuses=false){
+  const pedido=normalizarCodigo(data.pedido);
+  const tipoPedido=escapeHtml(data.tipoPedido||"—");
+  const transport=escapeHtml(data.tipoTransporte||"—");
+
+  const star=withStar
+    ?`<button class="order-star-btn" type="button"
+        title="Ver todos os itens do pedido"
+        onclick="event.stopPropagation();openOrderItemsModal('${pedido}')">★</button>`
+    :"";
+
+  return `
+    <div class="compact-order-cell">
+      <div class="compact-order-title">
+        ${star}
+        <strong>${pedido} / ${tipoPedido}</strong>
+        ${copyOrderButton(pedido)}
+      </div>
+      ${compactCommercialInfo(data)}
+      <div class="compact-meta"><span>Transporte:</span> ${transport}</div>
+      ${compactDateLine("Original",data.dataOriginal)}
+      ${compactDateLine("Sistema",data.previsao)}
+      ${showOperationalStatuses
+        ?`<div class="compact-order-statuses">
+            ${compactOrderStatusLine(
+              "Agendamento",
+              data.statusAgendamento,
+              data.dataAtitudeAgendamento,
+              data.observacoesAgendamento,
+              "schedule"
+            )}
+            ${compactOrderStatusLine(
+              "Previsão",
+              data.statusPrevisao,
+              data.dataAtitudePrevisao,
+              data.observacoesPrevisao,
+              "forecast"
+            )}
+          </div>`
+        :""}
+    </div>`;
+}
+
+
+function getGreatVolumeDisplay(item){
+  const product=(item.produtos||[])[0]||{};
+  const explicit=String(item.gdVolume||product.gdVolume||"").trim();
+
+  if(explicit)return explicit;
+  return item.grandeVolume||product.grandeVolume?"Sim":"Não";
+}
+
+function groupedItemsTooltip(order){
+  const items=Array.isArray(order.itens)?order.itens:[];
+  if(!items.length)return "";
+
+  const limit=6;
+  const visibleItems=items.slice(0,limit);
+  const remaining=Math.max(0,items.length-limit);
+
+  return `
+    <div class="grouped-items-tooltip" role="tooltip">
+      <strong class="grouped-items-tooltip-title">
+        Itens do pedido (${items.length})
+      </strong>
+
+      <div class="grouped-items-tooltip-list">
+        ${visibleItems.map(item=>{
+          const product=getItemProduct(item);
+          const category=canonicalCategory(item.categoria)||"Sem categoria";
+          const greatVolume=getGreatVolumeDisplay(item);
+          const isGreatVolume=Boolean(
+            item.grandeVolume||
+            ((item.produtos||[])[0]||{}).grandeVolume||
+            norm(greatVolume)==="sim"
+          );
+
+          return `
+            <div class="grouped-tooltip-item">
+              <div><b>Tipo:</b> <span>${escapeHtml(category)}</span></div>
+              <div><b>Código:</b> ${escapeHtml(product.codigo||"—")}</div>
+              <div class="grouped-tooltip-product">
+                <b>Produto:</b> ${escapeHtml(product.descricao||"—")}
+              </div>
+              <div>
+                <b>Grandes Volumes:</b>
+                <span class="${isGreatVolume?"tooltip-gv-yes":"tooltip-gv-no"}">
+                  ${escapeHtml(greatVolume)}
+                </span>
+              </div>
+            </div>`;
+        }).join("")}
+      </div>
+
+      ${remaining
+        ?`<div class="grouped-tooltip-more">+ ${remaining} outro${remaining===1?" item":"s itens"}</div>`
+        :""}
+    </div>`;
+}
+
+
+function customerIdentityKey(data){
+  const customerCode=normalizarCodigo(data.codigoCliente||"");
+  return customerCode?`code:${customerCode}`:`name:${norm(data.cliente||"")}`;
+}
+
+function getAllCustomerItems(data){
+  const identity=customerIdentityKey(data);
+  return (state.orders||[]).filter(item=>customerIdentityKey(item)===identity);
+}
+
+function groupCustomerOrders(items){
+  const groups=new Map();
+
+  items.forEach(item=>{
+    const pedido=normalizarCodigo(item.pedido);
+    if(!groups.has(pedido)){
+      groups.set(pedido,{
+        pedido,
+        tipoPedido:item.tipoPedido||"",
+        cliente:item.cliente||"",
+        codigoCliente:item.codigoCliente||"",
+        loja:item.loja||"",
+        nomeLoja:item.nomeLoja||"",
+        vendedor:item.vendedor||"",
+        dataOriginal:item.dataOriginal||"",
+        previsao:item.previsao||"",
+        statusAgendamento:item.statusAgendamento||"",
+        statusPrevisao:item.statusPrevisao||"",
+        statusSupervisao:item.statusSupervisao||"",
+        itens:[]
+      });
+    }
+
+    const group=groups.get(pedido);
+    group.itens.push(item);
+    if(!group.nomeLoja&&item.nomeLoja)group.nomeLoja=item.nomeLoja;
+    if(!group.vendedor&&item.vendedor)group.vendedor=item.vendedor;
+    if(!group.dataOriginal&&item.dataOriginal)group.dataOriginal=item.dataOriginal;
+    if(!group.previsao&&item.previsao)group.previsao=item.previsao;
+  });
+
+  return Array.from(groups.values()).sort((a,b)=>String(b.pedido).localeCompare(String(a.pedido),undefined,{numeric:true}));
+}
+
+function customerOrderStatus(group){
+  return group.statusSupervisao||group.statusAgendamento||group.statusPrevisao||"Sem acompanhamento";
+}
+
+function customerOrderItemsPreview(group){
+  const limit=3;
+  return `
+    <div class="customer-items-preview">
+      ${group.itens.slice(0,limit).map(item=>{
+        const product=getItemProduct(item);
+        const type=canonicalCategory(item.categoria)||"Sem categoria";
+        const gv=getGreatVolumeDisplay(item);
+        return `
+          <div class="customer-item-preview">
+            <strong>${escapeHtml(product.codigo||"—")}</strong>
+            <span>${escapeHtml(product.descricao||"—")}</span>
+            <small>${escapeHtml(type)} • Grandes Volumes: ${escapeHtml(gv)}</small>
+          </div>`;
+      }).join("")}
+      ${group.itens.length>limit?`<div class="customer-more-items">+ ${group.itens.length-limit} outro${group.itens.length-limit===1?" item":"s itens"}</div>`:""}
+    </div>`;
+}
+
+
+function openCustomerOrdersModalByIdentity(customerCode,customerName){
+  const code=decodeURIComponent(customerCode||"");
+  const name=decodeURIComponent(customerName||"");
+  const source=(state.orders||[]).find(item=>{
+    const itemCode=normalizarCodigo(item.codigoCliente||"");
+    if(code&&itemCode===normalizarCodigo(code))return true;
+    return !code&&norm(item.cliente||"")===norm(name);
+  });
+
+  openCustomerOrdersModal(source||{
+    codigoCliente:code,
+    cliente:name
+  });
+}
+
+function openCustomerOrdersModal(data){
+  const items=getAllCustomerItems(data);
+  const groups=groupCustomerOrders(items);
+  const delayed=groups.filter(group=>isPastDate(group.dataOriginal)).length;
+  const greatVolumes=items.filter(item=>{
+    const product=(item.produtos||[])[0]||{};
+    return Boolean(item.grandeVolume||product.grandeVolume);
+  }).length;
+
+  $("#customerOrdersTitle").textContent=data.cliente||"Cliente";
+  $("#customerOrdersSubtitle").textContent=data.codigoCliente
+    ?`Código do cliente: ${normalizarCodigo(data.codigoCliente)}`
+    :"Histórico localizado pelo nome do cliente";
+
+  $("#customerOrdersSummary").innerHTML=`
+    <div class="customer-summary-card"><strong>${groups.length}</strong><span>pedidos</span></div>
+    <div class="customer-summary-card"><strong>${items.length}</strong><span>itens</span></div>
+    <div class="customer-summary-card customer-summary-alert"><strong>${delayed}</strong><span>atrasados</span></div>
+    <div class="customer-summary-card"><strong>${greatVolumes}</strong><span>grandes volumes</span></div>`;
+
+  $("#customerOrdersBody").innerHTML=groups.length?groups.map(group=>`
+    <tr>
+      <td>
+        <div class="customer-order-number-wrap">
+          <button type="button" class="customer-order-link"
+            onclick="closeCustomerOrdersModal();openSchedule('${normalizarCodigo(group.pedido)}')">
+            <strong>${normalizarCodigo(group.pedido)} / ${escapeHtml(group.tipoPedido||"—")}</strong>
+          </button>
+          ${copyOrderButton(group.pedido,"copy-order-btn-modal")}
+        </div>
+      </td>
+      <td>
+        <div class="customer-commercial-cell">
+          <strong>${escapeHtml(group.nomeLoja||group.loja||"—")}</strong>
+          <span>${escapeHtml(group.vendedor||"Sem vendedor")}</span>
+        </div>
+      </td>
+      <td>
+        <div class="customer-dates-cell">
+          <span><b>Original:</b> ${group.dataOriginal?fmtDate(group.dataOriginal):"—"} ${isPastDate(group.dataOriginal)?'<em>ATRASADO</em>':""}</span>
+          <span><b>Sistema:</b> ${group.previsao?fmtDate(group.previsao):"—"}</span>
+        </div>
+      </td>
+      <td><div class="customer-status-cell">${badge(customerOrderStatus(group))}</div></td>
+      <td>${customerOrderItemsPreview(group)}</td>
+    </tr>`).join(""):`<tr><td colspan="5" class="empty">Nenhum pedido encontrado para este cliente.</td></tr>`;
+
+  const modal=$("#customerOrdersModal");
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden","false");
+  document.body.classList.add("modal-open");
+}
+
+function closeCustomerOrdersModal(){
+  const modal=$("#customerOrdersModal");
+  if(!modal)return;
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden","true");
+  document.body.classList.remove("modal-open");
+}
+
+function groupedClientInfo(order){
+  const name=escapeHtml(order.cliente||"—");
+  const address=String(order.enderecoCompleto||order.endereco||"").trim();
+  const city=String(order.cidade||"").trim();
+  const secondary=address||city;
+
+  return `
+    <div class="compact-client-cell grouped-client-cell">
+      <button type="button" class="grouped-client-name customer-name-button"
+              onclick="event.stopPropagation();openCustomerOrdersModalByIdentity('${encodeURIComponent(order.codigoCliente||"")}','${encodeURIComponent(order.cliente||"")}')">
+        ${name}
+        ${groupedItemsTooltip(order)}
+      </button>
+
+      ${secondary
+        ?`<span class="compact-client-address" title="${escapeHtml(secondary)}">${escapeHtml(secondary)}</span>`
+        :`<span class="compact-client-address compact-empty-address">Endereço não informado</span>`}
+    </div>`;
+}
+
+function compactClientInfo(data){
+  const name=escapeHtml(data.cliente||"—");
+  const address=String(data.enderecoCompleto||data.endereco||"").trim();
+  const city=String(data.cidade||"").trim();
+
+  let secondary=address;
+  if(!secondary && city)secondary=city;
+
+  return `
+    <div class="compact-client-cell">
+      <button type="button" class="customer-name-button item-customer-name"
+              onclick="event.stopPropagation();openCustomerOrdersModalByIdentity('${encodeURIComponent(data.codigoCliente||"")}','${encodeURIComponent(data.cliente||"")}')">
+        ${name}
+      </button>
+      ${secondary
+        ?`<span class="compact-client-address" title="${escapeHtml(secondary)}">${escapeHtml(secondary)}</span>`
+        :`<span class="compact-client-address compact-empty-address">Endereço não informado</span>`}
+    </div>`;
+}
+
+function compactProductInfo(item,showDelayReason=false){
+  const product=getItemProduct(item);
+  const hasDelayReason=showDelayReason&&isPastDate(item.dataOriginal);
+  const delayReason=String(item.motivoAtraso||"").trim();
+
+  return `
+    <div class="compact-product-cell">
+      <strong>${escapeHtml(product.codigo||"—")}</strong>
+      <span>${escapeHtml(product.descricao||"—")}</span>
+      ${hasDelayReason
+        ?`<div class="compact-delay-reason"
+              data-delay-key="${escapeHtml(String(item.chaveItem||"").trim())}">
+            <span class="compact-delay-label">Motivo:</span>
+            <button type="button"
+                    class="delay-reason-trigger compact-delay-trigger"
+                    onclick="event.stopPropagation();startDelayReasonEdit(this.closest('.compact-delay-reason'))">
+              ${escapeHtml(delayReason||"Informar motivo")}
+            </button>
+          </div>`
+        :""}
+    </div>`;
+}
+
+function renderOrdersByItem(){
+  const filteredItems=sortByAttitudeDate(
+    getVisibleItems(),
+    item=>item.dataAtitudeSupervisao||""
+  );
+  const pagination=paginateRows(filteredItems);
+  const items=pagination.rows;
+
+  $("#ordersHead").innerHTML=`
+    <tr>
+      <th>Tipo</th>
+      <th>Pedido</th>
+      <th>Cliente</th>
+      <th>Produto</th>
+      <th>${attitudeSortHeader()}</th>
+    </tr>`;
+
+  $("#ordersTable").innerHTML=items.length?items.map(item=>{
+    const product=getItemProduct(item);
+    const attitudeDate=resolveItemAttitudeDate(item);
+    const overdue=isPastDate(attitudeDate);
+    const key=String(item.chaveItem||"").trim();
+
+    return `
+      <tr class="order-row ${item.grandeVolume?"great-volume-row":""}">
+        <td>${compactTypeInfo(item)}</td>
+        <td>${compactOrderInfo(item,true,true)}</td>
+        <td>${compactClientInfo(item)}</td>
+        <td>${compactProductInfo(item,true)}</td>
+        <td class="combined-status-cell">
+          <div class="quick-edit-cell supervision-inline-cell combined-status-main"
+               data-supervision-field="statusSupervisao"
+               data-key="${escapeHtml(String(item.chaveItem||"").trim())}"
+               onclick="event.stopPropagation();startSupervisionInlineEdit(this)">
+            <span class="inline-edit-trigger">
+              ${badge(item.statusSupervisao||"Sem acompanhamento")}
+            </span>
+          </div>
+          <div class="quick-edit-cell supervision-inline-cell combined-status-date"
+               data-supervision-field="dataAtitudeSupervisao"
+               data-key="${escapeHtml(String(item.chaveItem||"").trim())}"
+               onclick="event.stopPropagation();startSupervisionInlineEdit(this)">
+            <span class="inline-edit-trigger">
+              ${item.dataAtitudeSupervisao?fmtDate(item.dataAtitudeSupervisao):"Sem data"}
+            </span>
+          </div>
+        </td>
+      </tr>`;
+  }).join(""):`<tr><td colspan="5" class="empty">Nenhum item encontrado.</td></tr>`;
+
+  updatePagination(pagination);
+}
+
+
+function shouldShowCustomerPositioning(){
+  return groupedScreenContext==="previsao";
+}
+
+function findGroupedOrderByNumber(pedido){
+  return getGroupedOrders().find(
+    order=>normalizarCodigo(order.pedido)===normalizarCodigo(pedido)
+  );
+}
+
+async function toggleCustomerPositioningByPedido(pedido){
+  const order=findGroupedOrderByNumber(pedido);
+  if(!order){
+    toast("Pedido não encontrado.");
+    return;
+  }
+  const current=norm(order.posicionadoCliente||"não")==="sim";
+  const next=current?"Não":"Sim";
+  const previous=order.posicionadoCliente||"Não";
+
+  order.posicionadoCliente=next;
+
+  (order.itens||[]).forEach(item=>{
+    if(canonicalCategory(item.categoria)==="Previsão"){
+      item.posicionadoCliente=next;
+    }
+  });
+
+  renderOrders();
+  toast(`Posicionado alterado para ${next}. Salvando...`);
+
+  try{
+    if(state.apiUrl){
+      const response=await api("savePositioned",{
+        positionedUpdate:{
+          pedido:normalizarCodigo(order.pedido),
+          valor:next
+        }
+      });
+
+      if(response&&response.error){
+        throw new Error(response.error);
+      }
+    }
+
+    toast(`Posicionado atualizado para ${next}.`);
+  }catch(error){
+    order.posicionadoCliente=previous;
+
+    (order.itens||[]).forEach(item=>{
+      if(canonicalCategory(item.categoria)==="Previsão"){
+        item.posicionadoCliente=previous;
+      }
+    });
+
+    renderOrders();
+    toast(error.message||"Não foi possível salvar Posicionado.");
+  }
+}
+
+function customerPositioningBlock(order){
+  if(!shouldShowCustomerPositioning())return "";
+
+  const positioned=norm(order.posicionadoCliente||"não")==="sim";
+  const dateText=order.dataPosicionarCliente
+    ?fmtDate(order.dataPosicionarCliente)
+    :"Sem data";
+
+  return `
+    <div class="customer-positioning-block">
+      <div class="customer-positioning-date">
+        <span>Posicionar cliente:</span>
+        <strong>${dateText}</strong>
+      </div>
+
+      <button type="button"
+              class="customer-positioning-toggle ${positioned?"is-positioned":""}"
+              title="Alterar Posicionado para ${positioned?"Não":"Sim"}"
+              onclick="event.stopPropagation();toggleCustomerPositioningByPedido('${normalizarCodigo(order.pedido)}')">
+        Posicionado: ${positioned?"Sim":"Não"}
+      </button>
+    </div>`;
+}
+
+function renderOrdersGrouped(){
+  const q=norm($("#searchInput").value);
+  const st=$("#statusFilter").value;
+  const category=$("#categoryFilter").value;
+  const delay=$("#delayFilter").value;
+  const city=$("#cityFilter").value;
+  const transport=$("#transportFilter").value;
+
+  const filteredRows=sortByAttitudeDate(
+    getGroupedOrders().filter(order=>{
+    const productText=order.itens.map(item=>{
+      const products=item.produtos||[];
+      return [
+        item.codigoProduto,
+        ...products.map(product=>
+          typeof product==="string"
+            ?product
+            :[
+              product.codigoProduto,
+              product.descricao,
+              product.complemento,
+              product.fornecedor,
+              product.ordemCompra
+            ].join(" ")
+        )
+      ].join(" ");
+    }).join(" ");
+
+    const searchable=norm([
+      order.pedido,
+      order.codigoCliente,
+      order.cliente,
+      order.tipoPedido,
+      order.cidade,
+      order.tipoTransporte,
+      order.vendedor,
+      order.telefone,
+      productText
+    ].join(" "));
+
+    return (!q||searchable.includes(q))
+      &&(!st||canonicalStatus(order.status)===canonicalStatus(st))
+      &&(!category||order.itens.some(item=>matchesCategoryFilter(item,category)))
+      &&matchesDelayFilter(order,delay)
+      &&(!city||order.cidade===city)
+      &&(!transport||order.tipoTransporte===transport);
+    }),
+    order=>order.dataAtitude||""
+  );
+
+  const pagination=paginateRows(filteredRows);
+  const rows=pagination.rows;
+
+  $("#ordersHead").innerHTML=`
+    <tr>
+      <th>Pedido</th>
+      <th>Cliente</th>
+      <th>${attitudeSortHeader()}</th>
+    </tr>`;
+
+  $("#ordersTable").innerHTML=rows.length?rows.map(order=>{
+    const attitudeOverdue=isPastDate(order.dataAtitude);
+    const hasGreatVolume=order.itens.some(item=>item.grandeVolume);
+
+    return `
+      <tr class="order-row ${attitudeOverdue?"attitude-overdue":""} ${hasGreatVolume?"great-volume-row":""}"
+          onclick="openSchedule('${normalizarCodigo(order.pedido)}')">
+        <td>
+          <button class="order-link compact-order-button" type="button"
+                  onclick="event.stopPropagation();openSchedule('${normalizarCodigo(order.pedido)}')">
+            ${compactOrderInfo(order,false)}
+          </button>
+        </td>
+        <td>${groupedClientInfo(order)}</td>
+        <td class="combined-status-cell">
+          <div class="quick-edit-cell combined-status-main"
+               data-field="status"
+               data-order="${normalizarCodigo(order.pedido)}"
+               onclick="event.stopPropagation();startInlineEdit(this)">
+            <span class="inline-edit-trigger">${badge(order.status||"Sem acompanhamento")}</span>
+          </div>
+          <div class="quick-edit-cell combined-status-date"
+               data-field="dataAtitude"
+               data-order="${normalizarCodigo(order.pedido)}"
+               onclick="event.stopPropagation();startInlineEdit(this)">
+            <span class="inline-edit-trigger">${order.dataAtitude?fmtDate(order.dataAtitude):"Sem data"}</span>
+          </div>
+          ${customerPositioningBlock(order)}
+        </td>
+      </tr>`;
+  }).join(""):`<tr><td colspan="3" class="empty">Nenhum pedido encontrado.</td></tr>`;
+
+  updatePagination(pagination);
+}
+
+
+function openOrderItemsModal(pedido){
+  const normalizedPedido=normalizarCodigo(pedido);
+  const items=state.orders.filter(item=>normalizarCodigo(item.pedido)===normalizedPedido);
+
+  if(!items.length){
+    toast("Nenhum item encontrado para este pedido.");
+    return;
+  }
+
+  const first=items[0];
+  $("#orderItemsPedido").textContent=normalizedPedido;
+  const copyOrderItemsButton=$("#copyOrderItemsPedido");
+  if(copyOrderItemsButton){
+    copyOrderItemsButton.onclick=event=>{
+      event.stopPropagation();
+      copyOrderNumber(normalizedPedido);
+    };
+    copyOrderItemsButton.setAttribute("aria-label",`Copiar pedido ${normalizedPedido}`);
+  }
+  $("#orderItemsSummary").textContent=
+    `${first.cliente||"Cliente não informado"} · ${items.length} item(ns)`;
+
+  $("#orderItemsBody").innerHTML=items.map(item=>{
+    const product=getItemProduct(item);
+    return `
+      <tr class="${item.grandeVolume?"great-volume-row":""}">
+        <td class="product-cell">${compactProductInfo(item)}</td>
+        <td class="great-volume-value">${escapeHtml(item.gdVolume||product.gdVolume||"—")}</td>
+        <td class="status-cell">${badge(item.statusAgendamento||"Sem acompanhamento")}</td>
+        <td class="date-detail-cell">${item.dataAtitudeAgendamento?fmtDate(item.dataAtitudeAgendamento):"—"}</td>
+        <td class="observation-cell">${escapeHtml(item.observacoesAgendamento||"—")}</td>
+        <td class="status-cell">${badge(item.statusPrevisao||"Sem acompanhamento")}</td>
+        <td class="date-detail-cell">${item.dataAtitudePrevisao?fmtDate(item.dataAtitudePrevisao):"—"}</td>
+        <td class="observation-cell">${escapeHtml(item.observacoesPrevisao||"—")}</td>
+      </tr>`;
+  }).join("");
+
+  $("#orderItemsModal").classList.add("open");
+}
+
+function closeOrderItemsModal(){
+  $("#orderItemsModal").classList.remove("open");
+}
+
+function renderAgenda(){
+  const chosen=$("#agendaDate").value;
+  let list=[...state.schedules].filter(s=>!chosen||s.dataAtitude===chosen).sort((a,b)=>(a.dataAtitude||"").localeCompare(b.dataAtitude||""));
+  $("#agendaList").innerHTML=list.length?list.map(s=>`<div class="agenda-card"><div class="agenda-time"><strong>${fmtDate(s.dataAtitude)}</strong></div><div><h3>Pedido ${s.pedido} · ${s.cliente||""}</h3><p>${s.loja||""}</p><p>${s.observacoes||""}</p></div>${badge(s.status)}</div>`).join(""):`<div class="panel empty">Nenhuma entrega nesta data.</div>`;
+}
+function renderHistory(){
+  const q=norm($("#historySearch").value);
+  const list=[...state.history].filter(h=>!q||norm([h.pedido,h.observacao,h.acao].join(" ")).includes(q)).sort((a,b)=>String(b.dataHora).localeCompare(String(a.dataHora)));
+  $("#historyList").innerHTML=list.length?list.map(h=>`<div class="timeline-item"><h3>${h.acao||"Alteração"} · Pedido ${h.pedido}</h3><p>${fmtDateTime(h.dataHora)} ${h.statusNovo?`· ${h.statusNovo}`:""}</p><p>${h.observacao||""}</p></div>`).join(""):`<div class="empty">Nenhum histórico encontrado.</div>`;
+}
+function populateOrderSelect(){
+  // O pedido é definido ao abrir a tela de detalhes.
+}
+function populateStatusSelect(){
+  const statuses=state.statuses.length?state.statuses:["Pendente"];
+  $("#scheduleStatus").innerHTML='<option value="">Selecione...</option>'+statuses.map(s=>`<option value="${s}">${s}</option>`).join("");
+}
+function updateOrderPreview(){
+  const pedido=normalizarCodigo($("#orderSelect").value);
+  const group=getGroupedOrders().find(x=>x.pedido===pedido);
+
+  if(!group){
+    $("#selectedOrderInfo").innerHTML="Selecione um pedido para visualizar os dados.";
+    $("#selectedOrderItems").innerHTML='<tr><td colspan="7" class="empty">Nenhum item encontrado.</td></tr>';
+    return;
+  }
+
+  $("#selectedOrderInfo").innerHTML=`
+    <div class="order-data-grid">
+      <div class="order-data-card"><span>Cliente</span><strong>${group.cliente||"Não informado"}</strong></div>
+      <div class="order-data-card"><span>Loja</span><strong>${group.loja||"—"}</strong></div>
+      <div class="order-data-card"><span>Previsão ERP</span><strong>${fmtDate(group.previsao)}</strong></div>
+      <div class="order-data-card"><span>Status atual</span><strong>${group.status||"Sem acompanhamento"}</strong></div>
+      <div class="order-data-card"><span>Quantidade</span><strong>${group.quantidadeItens} item(ns)</strong></div>
+      <div class="order-data-card"><span>Categoria</span><strong>${group.categoria||"Sem categoria"}</strong></div>
+      <div class="order-data-card"><span>Cidade</span><strong>${group.cidade||"—"}</strong></div>
+    </div>
+    <b>Telefone:</b> ${group.telefone||"Sem telefone"}<br>
+    <b>Entrega:</b> ${group.enderecoCompleto||group.endereco||"Endereço não informado"}
+  `;
+
+  $("#selectedOrderItems").innerHTML=group.itens.map(item=>{
+    const produto=(item.produtos&&item.produtos[0])||{};
+    const isGreatVolume=Boolean(item.grandeVolume||produto.grandeVolume);
+    const gdVolume=item.gdVolume||produto.gdVolume||"—";
+
+    return `<tr class="${isGreatVolume?"great-volume-row":""}">
+      <td>
+        <div class="compact-product-cell">
+          <strong>${normalizarCodigo(item.codigoProduto||produto.codigoProduto)||"—"}</strong>
+          <span>${escapeHtml(produto.descricao||"—")}</span>
+        </div>
+      </td>
+      <td>${item.categoria||produto.categoria||"Sem categoria"}</td>
+      <td>${produto.complemento||"—"}</td>
+      <td>${produto.fornecedor||"—"}</td>
+      <td>${produto.ordemCompra||item.ordemCompra||"—"}</td>
+      <td class="great-volume-value">${escapeHtml(gdVolume)}</td>
+    </tr>`;
+  }).join("");
+}
+
+function getOrderGroupByPedido(pedido){
+  return getGroupedOrders().find(order=>String(order.pedido)===String(pedido));
+}
+
+
+
+
+let pendingDelayReasonChange=null;
+
+function startDelayReasonEdit(cell){
+  const item=getItemByKey(cell.dataset.delayKey);
+  if(!item)return toast("Item não encontrado.");
+  if(!isPastDate(item.dataOriginal))return toast("O Motivo Atraso só pode ser informado quando a Data Original estiver atrasada.");
+
+  const options=(state.delayReasons||[]).map(reason=>
+    `<option value="${escapeHtml(reason)}" ${reason===item.motivoAtraso?"selected":""}>${escapeHtml(reason)}</option>`
+  ).join("");
+
+  cell.innerHTML=`<div class="inline-edit" onclick="event.stopPropagation()">
+    <select class="inline-select" data-delay-input><option value="">Selecione...</option>${options}</select>
+    <button class="inline-save" type="button">✓</button><button class="inline-cancel" type="button">×</button>
+  </div>`;
+
+  const input=cell.querySelector("[data-delay-input]");
+  cell.querySelector(".inline-save").onclick=()=>{
+    if(!input.value)return toast("Selecione o Motivo Atraso.");
+    pendingDelayReasonChange={pedido:normalizarCodigo(item.pedido),chaveInicial:String(item.chaveItem||"").trim(),motivo:input.value};
+    $("#delayReasonScopeDescription").textContent=`Motivo Atraso: ${input.value}`;
+    $("#delayReasonScopeModal").classList.add("open");
+  };
+  cell.querySelector(".inline-cancel").onclick=()=>renderOrders();
+  input.focus();
+}
+
+function closeDelayReasonModals(){
+  $("#delayReasonScopeModal").classList.remove("open");
+  $("#delayReasonItemsModal").classList.remove("open");
+  pendingDelayReasonChange=null;
+  renderOrders();
+}
+
+function openDelayReasonItemsSelection(){
+  if(!pendingDelayReasonChange)return;
+  const items=state.orders.filter(item=>normalizarCodigo(item.pedido)===pendingDelayReasonChange.pedido);
+  $("#delayReasonPedido").textContent=pendingDelayReasonChange.pedido;
+  $("#delayReasonSelectedValue").textContent=`Motivo Atraso: ${pendingDelayReasonChange.motivo}`;
+  $("#delayReasonItemsBody").innerHTML=items.map(item=>{
+    const product=getItemProduct(item), key=String(item.chaveItem||"").trim(), delayed=isPastDate(item.dataOriginal);
+    const checked=key===pendingDelayReasonChange.chaveInicial&&delayed?"checked":"";
+    return `<tr class="${delayed?"":"delay-item-disabled"} ${item.grandeVolume?"great-volume-row":""}">
+      <td><input type="checkbox" class="delay-item-check" value="${escapeHtml(key)}" ${checked} ${delayed?"":"disabled"}></td>
+      <td>${compactProductInfo(item)}</td>
+      <td>${badge(canonicalCategory(item.categoria)||"Sem categoria")}</td>
+      <td>${item.dataOriginal?fmtDate(item.dataOriginal):"—"}</td><td>${escapeHtml(item.motivoAtraso||"—")}</td>
+    </tr>`;
+  }).join("");
+  $("#delayReasonScopeModal").classList.remove("open");
+  $("#delayReasonItemsModal").classList.add("open");
+}
+
+async function saveDelayReasonChange(chaves){
+  if(!pendingDelayReasonChange)return;
+  const keys=[...new Set(chaves.filter(Boolean))];
+  if(!keys.length)return toast("Selecione pelo menos um item atrasado.");
+  const change={...pendingDelayReasonChange};
+  const previous=keys.map(key=>({key,motivoAtraso:getItemByKey(key)?.motivoAtraso||""}));
+  keys.forEach(key=>{const item=getItemByKey(key);if(item)item.motivoAtraso=change.motivo;});
+  $("#delayReasonScopeModal").classList.remove("open");
+  $("#delayReasonItemsModal").classList.remove("open");
+  pendingDelayReasonChange=null;
+  renderOrders();
+  toast("Salvando Motivo Atraso...");
+  try{
+    if(state.apiUrl){
+      const response=await api("saveDelayReason",{delayReasonUpdate:{motivo:change.motivo,chavesItens:keys}});
+      if(response&&response.error)throw new Error(response.error);
+    }
+    toast(`Motivo Atraso atualizado em ${keys.length} item(ns).`);
+  }catch(error){
+    previous.forEach(old=>{const item=getItemByKey(old.key);if(item)item.motivoAtraso=old.motivoAtraso;});
+    renderOrders();
+    toast(error.message||"Não foi possível salvar o Motivo Atraso.");
+  }
+}
+
+let pendingSupervisionChange=null;
+
+function supervisionFieldLabel(field){
+  return field==="statusSupervisao"
+    ?"Status Supervisão"
+    :"Data Atitude Supervisão";
+}
+
+function startSupervisionInlineEdit(cell){
+  if(cell.classList.contains("editing"))return;
+
+  const item=getItemByKey(cell.dataset.key);
+  const field=cell.dataset.supervisionField;
+
+  if(!item)return toast("Item não encontrado.");
+
+  cell.classList.add("editing");
+
+  if(field==="statusSupervisao"){
+    const statuses=(state.statuses||[])
+      .map(canonicalStatus)
+      .filter(status=>status&&status!=="Sem acompanhamento")
+      .filter((status,index,array)=>array.indexOf(status)===index);
+
+    cell.innerHTML=`
+      <div class="inline-edit" onclick="event.stopPropagation()">
+        <select class="inline-select" data-supervision-input>
+          <option value="">Selecione...</option>
+          ${statuses.map(status=>`
+            <option value="${escapeHtml(status)}"
+              ${status===canonicalStatus(item.statusSupervisao)?"selected":""}>
+              ${escapeHtml(status)}
+            </option>`).join("")}
+        </select>
+        <button class="inline-save" type="button">✓</button>
+        <button class="inline-cancel" type="button">×</button>
+      </div>`;
+  }else{
+    cell.innerHTML=`
+      <div class="inline-edit" onclick="event.stopPropagation()">
+        <input class="inline-date" data-supervision-input type="date"
+               min="${todayIsoLocal()}"
+               value="${item.dataAtitudeSupervisao||""}">
+        <button class="inline-save" type="button">✓</button>
+        <button class="inline-cancel" type="button">×</button>
+      </div>`;
+  }
+
+  const input=cell.querySelector("[data-supervision-input]");
+  cell.querySelector(".inline-save").onclick=()=>{
+    const value=input.value;
+
+    if(field==="statusSupervisao"&&!value){
+      toast("Selecione o Status Supervisão.");
+      return;
+    }
+
+    if(field==="dataAtitudeSupervisao"&&!validateAttitudeDate(value)){
+      return;
+    }
+
+    pendingSupervisionChange={
+      pedido:normalizarCodigo(item.pedido),
+      chaveInicial:String(item.chaveItem||"").trim(),
+      campo:field,
+      valor:value
+    };
+
+    $("#supervisionScopeDescription").textContent=
+      `${supervisionFieldLabel(field)}: ${field==="dataAtitudeSupervisao"?(value?fmtDate(value):"Em branco"):value}`;
+
+    $("#supervisionScopeModal").classList.add("open");
+  };
+
+  cell.querySelector(".inline-cancel").onclick=()=>renderOrders();
+  input.focus();
+}
+
+function closeSupervisionModals(){
+  $("#supervisionScopeModal").classList.remove("open");
+  $("#supervisionItemsModal").classList.remove("open");
+  pendingSupervisionChange=null;
+  renderOrders();
+}
+
+function openSupervisionItemsSelection(){
+  if(!pendingSupervisionChange)return;
+
+  const items=state.orders.filter(item=>
+    normalizarCodigo(item.pedido)===pendingSupervisionChange.pedido
+  );
+
+  $("#supervisionPedido").textContent=pendingSupervisionChange.pedido;
+  $("#supervisionSelectedValue").textContent=
+    `${supervisionFieldLabel(pendingSupervisionChange.campo)}: ${
+      pendingSupervisionChange.campo==="dataAtitudeSupervisao"
+        ?(pendingSupervisionChange.valor?fmtDate(pendingSupervisionChange.valor):"Em branco")
+        :pendingSupervisionChange.valor
+    }`;
+
+  $("#supervisionItemsBody").innerHTML=items.map(item=>{
+    const product=getItemProduct(item);
+    const key=String(item.chaveItem||"").trim();
+    const checked=key===pendingSupervisionChange.chaveInicial?"checked":"";
+
+    return `
+      <tr>
+        <td><input type="checkbox" class="supervision-item-check"
+                   value="${escapeHtml(key)}" ${checked}></td>
+        <td>${compactProductInfo(item)}</td>
+        <td>${badge(canonicalCategory(item.categoria)||"Sem categoria")}</td>
+        <td>${badge(item.statusSupervisao||"Sem acompanhamento")}</td>
+        <td>${item.dataAtitudeSupervisao?fmtDate(item.dataAtitudeSupervisao):"—"}</td>
+      </tr>`;
+  }).join("");
+
+  $("#supervisionScopeModal").classList.remove("open");
+  $("#supervisionItemsModal").classList.add("open");
+}
+
+async function saveSupervisionChange(chaves){
+  if(!pendingSupervisionChange)return;
+
+  const uniqueKeys=[...new Set(chaves.filter(Boolean))];
+
+  if(!uniqueKeys.length){
+    toast("Selecione pelo menos um item.");
+    return;
+  }
+
+  const change={...pendingSupervisionChange};
+  const previous=uniqueKeys.map(key=>{
+    const item=getItemByKey(key);
+    return {
+      key,
+      statusSupervisao:item?.statusSupervisao||"",
+      dataAtitudeSupervisao:item?.dataAtitudeSupervisao||""
+    };
+  });
+
+  uniqueKeys.forEach(key=>{
+    const item=getItemByKey(key);
+    if(!item)return;
+
+    if(change.campo==="statusSupervisao"){
+      item.statusSupervisao=change.valor;
+    }else{
+      item.dataAtitudeSupervisao=change.valor||"";
+    }
+  });
+
+  $("#supervisionScopeModal").classList.remove("open");
+  $("#supervisionItemsModal").classList.remove("open");
+  pendingSupervisionChange=null;
+  renderOrders();
+  toast("Salvando Supervisão...");
+
+  try{
+    if(state.apiUrl){
+      const response=await api("saveSupervision",{
+        supervisionUpdate:{
+          campo:change.campo,
+          valor:change.valor,
+          chavesItens:uniqueKeys
+        }
+      });
+
+      if(response&&response.error)throw new Error(response.error);
+    }
+
+    toast(`${supervisionFieldLabel(change.campo)} atualizado em ${uniqueKeys.length} item(ns).`);
+  }catch(error){
+    previous.forEach(old=>{
+      const item=getItemByKey(old.key);
+      if(!item)return;
+      item.statusSupervisao=old.statusSupervisao;
+      item.dataAtitudeSupervisao=old.dataAtitudeSupervisao;
+    });
+
+    renderOrders();
+    toast(error.message||"Não foi possível salvar a Supervisão.");
+  }
+}
+
+function getItemByKey(chaveItem){
+  return state.orders.find(item=>
+    String(item.chaveItem||"").trim()===String(chaveItem||"").trim()
+  );
+}
+
+window.startInlineItemEdit=function(cell){
+  if(cell.classList.contains("editing"))return;
+
+  const item=getItemByKey(cell.dataset.key);
+  const field=cell.dataset.field;
+
+  if(!item)return toast("Item não encontrado.");
+
+  const currentDate=resolveItemAttitudeDate(item);
+
+  if(field==="status"){
+    const statuses=(state.statuses||[])
+      .map(canonicalStatus)
+      .filter(status=>status&&status!=="Sem acompanhamento")
+      .filter((status,index,array)=>array.indexOf(status)===index);
+
+    cell.innerHTML=`
+      <div class="inline-edit" onclick="event.stopPropagation()">
+        <select class="inline-select" data-inline-input>
+          <option value="">Selecione...</option>
+          ${statuses.map(status=>`
+            <option value="${escapeHtml(status)}"
+              ${status===canonicalStatus(item.status)?"selected":""}>
+              ${escapeHtml(status)}
+            </option>`).join("")}
+        </select>
+        <button class="inline-save" type="button">✓</button>
+        <button class="inline-cancel" type="button">×</button>
+      </div>`;
+  }else{
+    cell.innerHTML=`
+      <div class="inline-edit" onclick="event.stopPropagation()">
+        <input class="inline-date" data-inline-input type="date"
+               min="${todayIsoLocal()}" value="${currentDate}">
+        <button class="inline-save" type="button">✓</button>
+        <button class="inline-cancel" type="button">×</button>
+      </div>`;
+  }
+
+  cell.classList.add("editing");
+  const input=cell.querySelector("[data-inline-input]");
+
+  cell.querySelector(".inline-save").onclick=()=>saveInlineItemEdit(
+    item,
+    field,
+    input.value
+  );
+  cell.querySelector(".inline-cancel").onclick=()=>renderOrders();
+
+  input.focus();
+}
+
+async function saveInlineItemEdit(item,field,newValue){
+  const category=canonicalCategory(item.categoria);
+  const oldStatus=item.status||"";
+  const oldAgendamento=item.dataAtitudeAgendamento||"";
+  const oldPrevisao=item.dataAtitudePrevisao||"";
+  const oldGeneral=item.dataAtitude||"";
+
+  const status=field==="status"?newValue:(item.status||"");
+  const dateValue=field==="dataAtitude"?newValue:resolveItemAttitudeDate(item);
+
+  if(!status)return toast("Selecione uma situação.");
+  if(!validateAttitudeDate(dateValue))return;
+
+  item.status=status;
+  item.dataAtitude=dateValue||"";
+
+  if(category==="Previsão"){
+    item.dataAtitudePrevisao=dateValue||"";
+  }else if(category==="Agendamento"||category==="Pronta Entrega"){
+    item.dataAtitudeAgendamento=dateValue||"";
+  }
+
+  renderOrders();
+  toast("Salvando alteração...");
+
+  const product=getItemProduct(item);
+  const payload={statusUpdate:{
+    pedido:normalizarCodigo(item.pedido),
+    chaveItem:String(item.chaveItem||"").trim(),
+    status,
+    dataAtitude:dateValue,
+    observacoes:item.observacoes||"",
+    codigoProduto:product.codigo
+  }};
+
+  try{
+    if(state.apiUrl){
+      const response=await api("saveOrderStatus",payload);
+      if(response&&response.error)throw new Error(response.error);
+    }
+
+    toast(field==="status"
+      ?"Situação do item atualizada."
+      :"Data atitude do item atualizada.");
+  }catch(error){
+    item.status=oldStatus;
+    item.dataAtitudeAgendamento=oldAgendamento;
+    item.dataAtitudePrevisao=oldPrevisao;
+    item.dataAtitude=oldGeneral;
+    renderOrders();
+    toast(error.message||"Não foi possível salvar o item.");
+  }
+}
+
+window.startInlineEdit=function(cell){
+  if(cell.classList.contains("editing"))return;
+
+  const pedido=cell.dataset.order;
+  const field=cell.dataset.field;
+  const group=getOrderGroupByPedido(pedido);
+  if(!group)return toast("Pedido não encontrado.");
+
+  renderOrders();
+  const freshCell=document.querySelector(`.quick-edit-cell[data-order="${pedido}"][data-field="${field}"]`);
+  if(!freshCell)return;
+
+  freshCell.classList.add("editing");
+
+  if(field==="status"){
+    const availableStatuses=(
+      state.statuses&&state.statuses.length
+        ? state.statuses
+        : [...new Set(getGroupedOrders().map(order=>order.status).filter(Boolean))]
+    );
+
+    const options=availableStatuses
+      .map(canonicalStatus)
+      .filter(status=>status&&status!=="Sem acompanhamento")
+      .filter((status,index,array)=>array.indexOf(status)===index)
+      .map(status=>`<option value="${escapeHtml(status)}" ${status===canonicalStatus(group.status)?"selected":""}>${escapeHtml(status)}</option>`)
+      .join("");
+
+    freshCell.innerHTML=`
+      <div class="inline-edit" onclick="event.stopPropagation()">
+        <select class="inline-select" data-inline-input>
+          <option value="">Selecione...</option>
+          ${options}
+        </select>
+        <button class="inline-save" type="button" title="Salvar">✓</button>
+        <button class="inline-cancel" type="button" title="Cancelar">×</button>
+      </div>`;
+  }else{
+    freshCell.innerHTML=`
+      <div class="inline-edit" onclick="event.stopPropagation()">
+        <input class="inline-date" data-inline-input type="date" min="${todayIsoLocal()}" value="${group.dataAtitude||""}">
+        <button class="inline-save" type="button" title="Salvar">✓</button>
+        <button class="inline-cancel" type="button" title="Cancelar">×</button>
+      </div>`;
+  }
+
+  const input=freshCell.querySelector("[data-inline-input]");
+  freshCell.querySelector(".inline-save").onclick=()=>saveInlineEdit(freshCell,group,field,input.value);
+  freshCell.querySelector(".inline-cancel").onclick=()=>renderOrders();
+
+  input.focus();
+  input.onkeydown=event=>{
+    if(event.key==="Enter"){
+      event.preventDefault();
+      saveInlineEdit(freshCell,group,field,input.value);
+    }else if(event.key==="Escape"){
+      event.preventDefault();
+      renderOrders();
+    }
+  };
+}
+
+
+
+function groupedContextFromCategory(category){
+  const normalized=canonicalCategory(category);
+
+  if(normalized==="Agendamento")return "agendamento";
+  if(normalized==="Previsão")return "previsao";
+  if(normalized==="Pronta Entrega")return "pronta_entrega";
+
+  return "";
+}
+
+function itemMatchesGroupedContext(item,context){
+  const category=canonicalCategory(item.categoria);
+
+  if(context==="agendamento"){
+    return category==="Agendamento" || category==="Pronta Entrega";
+  }
+
+  if(context==="previsao"){
+    return category==="Previsão";
+  }
+
+  if(context==="pronta_entrega"){
+    return category==="Pronta Entrega";
+  }
+
+  return false;
+}
+
+function applyOrderUpdateLocally(
+  pedido,
+  status,
+  dataAtitude,
+  observacoes,
+  context=groupedScreenContext
+){
+  const normalizedPedido=normalizarCodigo(pedido);
+  status=canonicalStatus(status);
+
+  state.orders
+    .filter(item=>
+      normalizarCodigo(item.pedido)===normalizedPedido &&
+      itemMatchesGroupedContext(item,context)
+    )
+    .forEach(item=>{
+      item.status=status;
+      item.dataAtitude=dataAtitude||"";
+
+      if(context==="previsao"){
+        item.statusPrevisao=status;
+        item.dataAtitudePrevisao=dataAtitude||"";
+        if(observacoes!==undefined){
+          item.observacoesPrevisao=observacoes;
+        }
+      }else{
+        item.statusAgendamento=status;
+        item.dataAtitudeAgendamento=dataAtitude||"";
+        if(observacoes!==undefined){
+          item.observacoesAgendamento=observacoes;
+        }
+      }
+
+      if(observacoes!==undefined){
+        item.observacoes=observacoes;
+      }
+    });
+}
+
+async function saveInlineEdit(cell,group,field,newValue){
+  const status=field==="status"?newValue:(group.status||"");
+  const dataAtitude=field==="dataAtitude"?newValue:(group.dataAtitude||"");
+
+  if(!status)return toast("Selecione uma situação.");
+  if(!validateAttitudeDate(dataAtitude))return;
+
+  cell.classList.add("inline-saving");
+
+  const payload={statusUpdate:{
+    pedido:normalizarCodigo(group.pedido),
+    cliente:group.cliente,
+    loja:group.loja,
+    status,
+    dataAtitude,
+    telefone:group.telefone||"",
+    endereco:group.endereco||"",
+    cidade:group.cidade||"",
+    observacoes:group.observacoes||"",
+    codigoProduto:"",
+    ordemCompra:"",
+    chaveItem:"",
+    grupoTela:groupedScreenContext
+  }};
+
+  const previousStatus=group.status||"";
+  const previousDate=group.dataAtitude||"";
+  const previousObservacoes=group.observacoes||"";
+
+  // Atualiza a tabela imediatamente, antes da resposta do servidor.
+  applyOrderUpdateLocally(
+    group.pedido,
+    status,
+    dataAtitude,
+    previousObservacoes,
+    groupedScreenContext
+  );
+  renderOrders();
+  toast("Salvando alteração...");
+
+  try{
+    if(state.apiUrl){
+      const response=await api("saveOrderStatus",payload);
+      if(response&&response.error)throw new Error(response.error);
+    }
+
+    toast(field==="status"
+      ?"Situação atualizada com sucesso."
+      :"Data atitude atualizada com sucesso.");
+  }catch(error){
+    applyOrderUpdateLocally(
+      group.pedido,
+      previousStatus,
+      previousDate,
+      previousObservacoes,
+      groupedScreenContext
+    );
+    renderOrders();
+    toast(error.message||"Não foi possível salvar a alteração.");
+  }
+}
+
+window.openSchedule=function(pedido=""){
+  state.editing=null;
+  $("#scheduleForm").reset();
+
+  pedido=normalizarCodigo(pedido);
+  const group=getGroupedOrders().find(x=>x.pedido===pedido);
+
+  $("#orderSelect").value=pedido;
+  populateStatusSelect();
+
+  if(group){
+    if(group.status && group.status!=="Status divergente"){
+      $("#scheduleStatus").value=group.status;
+    }
+    $("#attitudeDate").min=todayIsoLocal();
+    $("#attitudeDate").value=group.dataAtitude||"";
+    $("#notes").value=group.observacoes||"";
+  }
+
+  updateOrderPreview();
+  $("#scheduleModal").classList.add("open");
+}
+async function saveSchedule(ev){
+  ev.preventDefault();
+  const group=getGroupedOrders().find(o=>o.pedido===normalizarCodigo($("#orderSelect").value));
+  if(!group)return toast("Pedido não encontrado.");
+  const status=$("#scheduleStatus").value;
+  const dataAtitude=$("#attitudeDate").value;
+  const observacoes=$("#notes").value.trim();
+  if(!status)return toast("Selecione o status do acompanhamento.");
+  if(!validateAttitudeDate(dataAtitude))return;
+  if(!observacoes)return toast("Informe a observação.");
+  const payload={statusUpdate:{
+    pedido:normalizarCodigo(group.pedido),cliente:group.cliente,loja:group.loja,status,
+    dataAtitude:$("#attitudeDate").value,
+    telefone:group.telefone||"",
+    endereco:group.endereco||"",cidade:group.cidade||"",
+    observacoes:$("#notes").value.trim(),codigoProduto:"",
+    ordemCompra:"",chaveItem:"",
+    grupoTela:groupedScreenContext
+  }};
+  $("#saveScheduleBtn").disabled=true;
+
+  const previousStatus=group.status||"";
+  const previousDate=group.dataAtitude||"";
+  const previousObservacoes=group.observacoes||"";
+
+  // Atualiza e fecha a janela imediatamente.
+  applyOrderUpdateLocally(
+    group.pedido,
+    status,
+    payload.statusUpdate.dataAtitude,
+    payload.statusUpdate.observacoes,
+    groupedScreenContext
+  );
+  renderAll();
+  $("#scheduleModal").classList.remove("open");
+  toast("Salvando acompanhamento...");
+
+  try{
+    if(state.apiUrl){
+      const r=await api("saveOrderStatus",payload);
+      if(r&&r.error)throw new Error(r.error);
+    }
+
+    if(!state.apiUrl){
+      state.history.push({
+        dataHora:new Date().toISOString(),
+        pedido:group.pedido,
+        acao:"Acompanhamento do pedido atualizado",
+        statusNovo:status,
+        observacao:payload.statusUpdate.observacoes
+      });
+    }
+
+    toast("Acompanhamento salvo para todos os itens do pedido.");
+  }catch(e){
+    applyOrderUpdateLocally(
+      group.pedido,
+      previousStatus,
+      previousDate,
+      previousObservacoes,
+      groupedScreenContext
+    );
+    renderOrders();
+    toast("Não foi possível salvar: "+e.message);
+  }
+  finally{$("#saveScheduleBtn").disabled=false}
+}
+
+function clearSidebarCategory(){
+  $$(".category-nav-item").forEach(button=>button.classList.remove("active"));
+}
+
+function openAllOrders(){
+  closeSupervisorDashboard();
+  supervisorQuickFilter="";
+  resetOrdersPage();
+  ordersDisplayMode="items";
+  groupedScreenContext="";
+  $("#categoryFilter").value="";
+  $("#delayFilter").value="";
+  $("#cityFilter").value="";
+  $("#transportFilter").value="";
+  clearSidebarCategory();
+  switchView("pedidos");
+  $("#pageTitle").textContent="Acompanhamento de pedidos";
+  $("#pageSubtitle").textContent=`${state.orders.length} item(ns) em acompanhamento`;
+  $("#supervisorDashboardBtn").hidden=false;
+  renderOrders();
+}
+
+function openCategory(category){
+  closeSupervisorDashboard();
+  supervisorQuickFilter="";
+  resetOrdersPage();
+  ordersDisplayMode="grouped";
+  groupedScreenContext=groupedContextFromCategory(category);
+
+  const filterValue=category==="Agendamento"
+    ?"Agendamento + Pronta Entrega"
+    :category;
+
+  $("#categoryFilter").value=filterValue;
+  switchView("pedidos");
+
+  $$(".category-nav-item").forEach(button=>{
+    button.classList.toggle(
+      "active",
+      canonicalCategory(button.dataset.category)===canonicalCategory(category)
+    );
+  });
+
+  const total=getGroupedOrders().filter(order=>
+    order.itens.some(item=>matchesCategoryFilter(item,filterValue))
+  ).length;
+
+  $("#pageTitle").textContent=category;
+  $("#pageSubtitle").textContent=category==="Agendamento"
+    ?`${total} pedido(s) de Agendamento e Pronta Entrega`
+    :`${total} pedido(s) encontrado(s) nesta categoria`;
+
+  renderOrders();
+}
+
+function switchView(view){
+  $$(".view").forEach(v=>v.classList.remove("active"));$(`#${view}View`).classList.add("active");
+  $("#supervisorDashboardBtn").hidden=view!=="pedidos";
+  $$(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.view===view));
+
+  if(view!=="pedidos"){
+    clearSidebarCategory();
+  }
+  const titles={dashboard:["Painel de Gestão Logística","Visão consolidada da operação e do andamento dos pedidos"],pedidos:["Acompanhamento de pedidos","Consulte e atualize o acompanhamento logístico"],historico:["Histórico logístico","Registro permanente de todas as movimentações e alterações de status"]};
+  $("#pageTitle").textContent=titles[view][0];$("#pageSubtitle").textContent=titles[view][1];
+}
+$$(".nav-item").forEach(button=>{
+  button.onclick=()=>{
+    if(button.dataset.allOrders==="true"){
+      openAllOrders();
+    }else{
+      switchView(button.dataset.view);
+    }
+  };
+});
+
+$$(".category-nav-item").forEach(button=>{
+  button.onclick=()=>openCategory(button.dataset.category);
+});
+
+$$("[data-go]").forEach(b=>b.onclick=()=>switchView(b.dataset.go));
+$("#newScheduleBtn").onclick=()=>{openAllOrders();$("#searchInput").focus();};
+$("#scheduleForm").onsubmit=saveSchedule;
+$$(".close-modal").forEach(b=>b.onclick=()=>$("#scheduleModal").classList.remove("open"));
+
+$("#closeSupervisionScope").onclick=closeSupervisionModals;
+$("#closeSupervisionItems").onclick=closeSupervisionModals;
+$("#cancelSupervisionItems").onclick=closeSupervisionModals;
+
+$("#saveOnlyCurrentItem").onclick=()=>{
+  if(!pendingSupervisionChange)return;
+  saveSupervisionChange([pendingSupervisionChange.chaveInicial]);
+};
+
+$("#chooseOtherItems").onclick=openSupervisionItemsSelection;
+
+$("#selectAllSupervisionItems").onclick=()=>{
+  $$(".supervision-item-check").forEach(check=>check.checked=true);
+};
+
+$("#clearAllSupervisionItems").onclick=()=>{
+  $$(".supervision-item-check").forEach(check=>check.checked=false);
+};
+
+$("#applySupervisionItems").onclick=()=>{
+  const selected=$$(".supervision-item-check:checked").map(check=>check.value);
+  saveSupervisionChange(selected);
+};
+
+$("#supervisionScopeModal").onclick=event=>{
+  if(event.target.id==="supervisionScopeModal")closeSupervisionModals();
+};
+
+$("#supervisionItemsModal").onclick=event=>{
+  if(event.target.id==="supervisionItemsModal")closeSupervisionModals();
+};
+
+
+$("#closeDelayReasonScope").onclick=closeDelayReasonModals;
+$("#closeDelayReasonItems").onclick=closeDelayReasonModals;
+$("#cancelDelayReasonItems").onclick=closeDelayReasonModals;
+$("#saveDelayOnlyCurrentItem").onclick=()=>pendingDelayReasonChange&&saveDelayReasonChange([pendingDelayReasonChange.chaveInicial]);
+$("#chooseOtherDelayItems").onclick=openDelayReasonItemsSelection;
+$("#selectAllDelayItems").onclick=()=>$$('.delay-item-check:not(:disabled)').forEach(check=>check.checked=true);
+$("#clearAllDelayItems").onclick=()=>$$('.delay-item-check').forEach(check=>check.checked=false);
+$("#applyDelayReasonItems").onclick=()=>saveDelayReasonChange($$('.delay-item-check:checked').map(check=>check.value));
+$("#delayReasonScopeModal").onclick=event=>{if(event.target.id==="delayReasonScopeModal")closeDelayReasonModals();};
+$("#delayReasonItemsModal").onclick=event=>{if(event.target.id==="delayReasonItemsModal")closeDelayReasonModals();};
+
+const closeOrderItemsButton=$("#closeOrderItemsModal");
+const orderItemsModalElement=$("#orderItemsModal");
+
+if(closeOrderItemsButton){
+  closeOrderItemsButton.onclick=closeOrderItemsModal;
+}
+
+if(orderItemsModalElement){
+  orderItemsModalElement.onclick=event=>{
+    if(event.target.id==="orderItemsModal")closeOrderItemsModal();
+  };
+}
+$("#openConfig").onclick=()=>{$("#apiUrlInput").value=state.apiUrl;$("#configModal").classList.add("open")};
+$$(".close-config").forEach(b=>b.onclick=()=>$("#configModal").classList.remove("open"));
+$("#saveConfig").onclick=async()=>{state.apiUrl=$("#apiUrlInput").value.trim();localStorage.setItem("clamilog_api_url",state.apiUrl);$("#configModal").classList.remove("open");await runSync();};
+$("#clearConfig").onclick=async()=>{state.apiUrl="";localStorage.removeItem("clamilog_api_url");$("#configModal").classList.remove("open");await runSync();};
+
+$("#pageSizeSelect").onchange=event=>{
+  ordersPageSize=Number(event.target.value)||100;
+  resetOrdersPage();
+  renderOrders();
+};
+
+$("#previousPage").onclick=()=>{
+  if(ordersCurrentPage>1){
+    ordersCurrentPage--;
+    renderOrders();
+    document.querySelector(".table-panel")?.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+};
+
+$("#nextPage").onclick=()=>{
+  const totalPages=Math.max(1,Math.ceil(lastFilteredOrdersCount/ordersPageSize));
+  if(ordersCurrentPage<totalPages){
+    ordersCurrentPage++;
+    renderOrders();
+    document.querySelector(".table-panel")?.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+};
+
+$("#supervisorDashboardBtn").onclick=toggleSupervisorDashboard;
+
+const supervisorDashboardElement=$("#supervisorDashboard");
+if(supervisorDashboardElement){
+  supervisorDashboardElement.addEventListener("click",event=>{
+    const filterButton=event.target.closest("[data-supervisor-filter]");
+    if(filterButton&&supervisorDashboardElement.contains(filterButton)){
+      openSupervisorTableWithFilter(
+        filterButton.dataset.supervisorFilter||""
+      );
+      return;
+    }
+
+    const typeButton=event.target.closest("[data-dashboard-order-type]");
+    if(typeButton&&supervisorDashboardElement.contains(typeButton)){
+      const type=typeButton.dataset.dashboardOrderType||"";
+
+      supervisorDashboardTypeFilter=
+        supervisorDashboardTypeFilter===type?"":type;
+
+      renderSupervisorDashboard();
+      return;
+    }
+
+    const categoryFilterButton=event.target.closest(
+      "[data-dashboard-category-filter]"
+    );
+
+    if(
+      categoryFilterButton &&
+      supervisorDashboardElement.contains(categoryFilterButton)
+    ){
+      const category=
+        categoryFilterButton.dataset.dashboardCategoryFilter||"";
+
+      supervisorDashboardCategoryFilter=
+        supervisorDashboardCategoryFilter===category?"":category;
+
+      renderSupervisorDashboard();
+      return;
+    }
+
+    const clearFilterButton=event.target.closest(
+      "[data-clear-dashboard-filter]"
+    );
+
+    if(
+      clearFilterButton &&
+      supervisorDashboardElement.contains(clearFilterButton)
+    ){
+      const target=clearFilterButton.dataset.clearDashboardFilter||"";
+
+      if(target==="type"||target==="all"){
+        supervisorDashboardTypeFilter="";
+      }
+
+      if(target==="category"||target==="all"){
+        supervisorDashboardCategoryFilter="";
+      }
+
+      renderSupervisorDashboard();
+      return;
+    }
+
+    const orderButton=event.target.closest("[data-dashboard-pedido]");
+    if(orderButton&&supervisorDashboardElement.contains(orderButton)){
+      const pedido=orderButton.dataset.dashboardPedido||"";
+      if(!pedido)return;
+
+      closeSupervisorDashboard();
+      openAllOrders();
+      $("#searchInput").value=pedido;
+      resetOrdersPage();
+      renderOrders();
+    }
+  });
+}
+
+const refreshButton=$("#refreshBtn");
+if(refreshButton){
+  refreshButton.onclick=event=>{
+    event.preventDefault();
+    runSync();
+  };
+}
+let searchRenderTimer=null;
+
+["searchInput","statusFilter","categoryFilter","delayFilter","cityFilter","transportFilter"].forEach(id=>{
+  $("#"+id).addEventListener(id==="searchInput"?"input":"change",()=>{
+    resetOrdersPage();
+
+    if(id==="categoryFilter"){
+      const selected=$("#categoryFilter").value;
+      $$(".category-nav-item").forEach(button=>{
+        const buttonCategory=canonicalCategory(button.dataset.category);
+        const isAgendamentoGroup=
+          selected==="Agendamento + Pronta Entrega" &&
+          buttonCategory==="Agendamento";
+
+        button.classList.toggle(
+          "active",
+          isAgendamentoGroup ||
+          buttonCategory===canonicalCategory(selected)
+        );
+      });
+    }
+
+    if(id==="searchInput"){
+      clearTimeout(searchRenderTimer);
+      searchRenderTimer=setTimeout(renderOrders,180);
+    }else{
+      renderOrders();
+    }
+  });
+});
+$("#historySearch").oninput=renderHistory;
+loadData().catch(error=>{
+  console.error("Erro no carregamento inicial:",error);
+  toast(error.message||"Não foi possível carregar o painel.");
+});
+
+document.addEventListener("click",event=>{
+  const modal=document.getElementById("customerOrdersModal");
+  if(modal&&event.target===modal)closeCustomerOrdersModal();
+});
+
+document.addEventListener("keydown",event=>{
+  if(event.key==="Escape"){
+    const modal=document.getElementById("customerOrdersModal");
+    if(modal&&modal.classList.contains("open"))closeCustomerOrdersModal();
+  }
+});
+
+</script>
+
+
+
+<div id="customerOrdersModal" class="modal-backdrop customer-orders-overlay" aria-hidden="true">
+  <div class="modal large customer-orders-modal" role="dialog" aria-modal="true" aria-labelledby="customerOrdersTitle">
+    <div class="modal-head">
+      <div>
+        <h2 id="customerOrdersTitle">Pedidos do cliente</h2>
+        <p id="customerOrdersSubtitle" class="modal-subtitle"></p>
+      </div>
+      <button type="button" onclick="closeCustomerOrdersModal()" aria-label="Fechar">×</button>
+    </div>
+    <div id="customerOrdersSummary" class="customer-orders-summary"></div>
+    <div class="customer-orders-table-wrap">
+      <table class="customer-orders-table">
+        <thead><tr><th>Pedido</th><th>Loja / Vendedor</th><th>Datas</th><th>Status</th><th>Itens</th></tr></thead>
+        <tbody id="customerOrdersBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
