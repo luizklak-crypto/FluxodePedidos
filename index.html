@@ -2812,7 +2812,7 @@ body.modal-open{overflow:hidden}
 
 
 /* =========================================================
-   V10.03 — FILTROS MÚLTIPLOS INTEGRADOS
+   V10.04 — FILTROS MÚLTIPLOS INTEGRADOS
    ========================================================= */
 
 .advanced-toolbar{
@@ -3028,7 +3028,69 @@ body.modal-open{overflow:hidden}
 
 
 
-/* V10.03 — Local atual do item em Pronta Entrega */
+
+/* V10.04 — Acompanhamento do Gestor por pedido */
+.manager-follow-up-btn{
+  width:28px;
+  height:28px;
+  display:inline-grid;
+  place-items:center;
+  flex:0 0 auto;
+  padding:0;
+  border:1px solid #d9d4ca;
+  border-radius:7px;
+  background:#fff;
+  color:#918b82;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.manager-follow-up-btn:hover,
+.manager-follow-up-btn:focus{
+  border-color:#8b7355;
+  color:#6f5438;
+  outline:none;
+}
+
+.manager-follow-up-btn.is-active{
+  border-color:#b78628;
+  background:#fff7df;
+  color:#9b6900;
+}
+
+.manager-follow-up-btn.is-today{
+  box-shadow:0 0 0 2px rgba(217,155,37,.20);
+}
+
+.manager-follow-up-btn.is-overdue{
+  border-color:#b91c1c;
+  background:#fff1f1;
+  color:#b91c1c;
+}
+
+.manager-follow-up-modal{
+  max-width:650px;
+}
+
+.manager-completed-field{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border:1px solid #ded8ce;
+  background:#faf8f4;
+}
+
+.manager-completed-field input{
+  width:18px;
+  height:18px;
+  min-height:0;
+  margin:0;
+}
+
+
+/* V10.04 — Local atual do item em Pronta Entrega */
 .current-item-location{
   display:flex;
   flex-direction:column;
@@ -3049,7 +3111,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.03 — filtros de data de entrega e descrição do produto */
+/* V10.04 — filtros de data de entrega e descrição do produto */
 .management-filter-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(260px,1fr));
@@ -3116,7 +3178,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.03 — títulos permanentes nos filtros reais */
+/* V10.04 — títulos permanentes nos filtros reais */
 .advanced-filter{
   display:flex;
   flex-direction:column;
@@ -3139,7 +3201,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.03 — Previsão de Recebimento por OC */
+/* V10.04 — Previsão de Recebimento por OC */
 .receiving-dashboard{display:grid;gap:18px}
 .receiving-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
 .receiving-metric{appearance:none;min-width:0;padding:17px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:var(--shadow);color:var(--text);text-align:left}
@@ -3438,6 +3500,54 @@ body.modal-open{overflow:hidden}
     </div>
   </div>
 
+  <div class="modal-backdrop" id="managerFollowUpModal">
+    <div class="modal manager-follow-up-modal">
+      <div class="modal-head">
+        <div>
+          <h2>Acompanhamento do Gestor</h2>
+          <p id="managerFollowUpSubtitle">Pedido</p>
+        </div>
+        <button type="button" id="closeManagerFollowUp">×</button>
+      </div>
+
+      <form id="managerFollowUpForm">
+        <input type="hidden" id="managerFollowUpOrder" />
+
+        <div class="form-grid">
+          <label class="span-2">Observação do gestor
+            <textarea id="managerObservation"
+                      rows="5"
+                      placeholder="Digite o que precisa ser acompanhado..."></textarea>
+          </label>
+
+          <label>Data do lembrete
+            <input id="managerReminderDate" type="date" />
+          </label>
+
+          <label>Responsável atual
+            <input id="managerResponsible"
+                   type="text"
+                   placeholder="Digite o responsável..." />
+          </label>
+
+          <label class="span-2 manager-completed-field">
+            <input id="managerCompleted" type="checkbox" />
+            <span>Concluído — encerrar este acompanhamento</span>
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button"
+                  class="secondary"
+                  id="cancelManagerFollowUp">Cancelar</button>
+          <button type="submit"
+                  class="primary"
+                  id="saveManagerFollowUp">Salvar acompanhamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="configModal">
     <div class="modal">
       <div class="modal-head"><div><h2>Conexão com Google Sheets</h2><p>Cole a URL do Web App publicado no Apps Script.</p></div><button class="close-config">×</button></div>
@@ -3646,7 +3756,7 @@ let supervisorPreviousView={
   title:"Acompanhamento de pedidos",
   subtitle:""
 };
-const state = {orders:[],schedules:[],history:[],statuses:[],delayReasons:[], attitudeSortDirection:"asc", apiUrl:localStorage.getItem("clamilog_api_url")||DEFAULT_API_URL, editing:null};
+const state = {orders:[],schedules:[],history:[],statuses:[],delayReasons:[],managerFollowUps:[], attitudeSortDirection:"asc", apiUrl:localStorage.getItem("clamilog_api_url")||DEFAULT_API_URL, editing:null};
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const norm = s => String(s??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
@@ -4140,6 +4250,11 @@ async function loadData(showFeedback=false){
     state.history=data.history||[];
     state.statuses=[...new Set((data.statuses||[]).map(canonicalStatus).filter(status=>status&&status!=="Sem acompanhamento"))];
     state.delayReasons=[...new Set((data.delayReasons||[]).map(value=>String(value||"").trim()).filter(Boolean))];
+    state.managerFollowUps=(data.managerFollowUps||[]).map(item=>({
+      ...item,
+      pedido:normalizarCodigo(item.pedido),
+      concluido:item.concluido===true||norm(item.concluido)==="sim"
+    }));
 
     $("#connectionBadge").classList.add("online");
     $("#connectionBadge span").textContent="Google Sheets conectado";
@@ -6932,6 +7047,111 @@ function copyOrderButton(orderNumber,extraClass=""){
     </button>`;
 }
 
+
+function getManagerFollowUp(pedido){
+  const normalized=normalizarCodigo(pedido);
+
+  return (state.managerFollowUps||[]).find(
+    item=>normalizarCodigo(item.pedido)===normalized
+  )||null;
+}
+
+function managerFollowUpButton(pedido){
+  const normalized=normalizarCodigo(pedido);
+  const followUp=getManagerFollowUp(normalized);
+  const active=followUp&&!followUp.concluido;
+  const overdue=active&&followUp.dataLembrete&&isPastDate(followUp.dataLembrete);
+  const today=active&&followUp.dataLembrete===todayIsoLocal();
+
+  const title=followUp
+    ?followUp.concluido
+      ?"Acompanhamento concluído — clique para consultar ou reabrir"
+      :overdue
+        ?"Lembrete do gestor vencido"
+        :today
+          ?"Lembrete do gestor para hoje"
+          :"Pedido marcado para acompanhamento do gestor"
+    :"Marcar pedido para acompanhamento do gestor";
+
+  return `
+    <button type="button"
+            class="manager-follow-up-btn ${active?"is-active":""} ${overdue?"is-overdue":""} ${today?"is-today":""}"
+            title="${escapeHtml(title)}"
+            aria-label="${escapeHtml(title)}"
+            onclick="event.stopPropagation();openManagerFollowUp('${normalized}')">
+      <span aria-hidden="true">⚑</span>
+    </button>`;
+}
+
+function openManagerFollowUp(pedido){
+  const normalized=normalizarCodigo(pedido);
+  const followUp=getManagerFollowUp(normalized);
+
+  $("#managerFollowUpOrder").value=normalized;
+  $("#managerFollowUpSubtitle").textContent=`Pedido ${normalized}`;
+  $("#managerObservation").value=followUp?.observacaoGestor||"";
+  $("#managerReminderDate").value=followUp?.dataLembrete||"";
+  $("#managerResponsible").value=followUp?.responsavel||"";
+  $("#managerCompleted").checked=Boolean(followUp?.concluido);
+
+  $("#managerFollowUpModal").classList.add("open");
+  setTimeout(()=>$("#managerObservation").focus(),50);
+}
+
+function closeManagerFollowUp(){
+  $("#managerFollowUpModal").classList.remove("open");
+}
+
+async function saveManagerFollowUp(event){
+  event.preventDefault();
+
+  const pedido=normalizarCodigo($("#managerFollowUpOrder").value);
+  const button=$("#saveManagerFollowUp");
+  const originalText=button.textContent;
+
+  button.disabled=true;
+  button.textContent="Salvando...";
+
+  try{
+    const result=await api("saveManagerFollowUp",{
+      managerFollowUp:{
+        pedido,
+        observacaoGestor:$("#managerObservation").value.trim(),
+        dataLembrete:$("#managerReminderDate").value,
+        responsavel:$("#managerResponsible").value.trim(),
+        concluido:$("#managerCompleted").checked
+      }
+    });
+
+    if(result?.error)throw new Error(result.error);
+
+    const saved=result.followUp;
+    const index=(state.managerFollowUps||[]).findIndex(
+      item=>normalizarCodigo(item.pedido)===pedido
+    );
+
+    if(index>=0){
+      state.managerFollowUps[index]=saved;
+    }else{
+      state.managerFollowUps.push(saved);
+    }
+
+    closeManagerFollowUp();
+    renderOrders();
+    toast(
+      saved.concluido
+        ?`Acompanhamento do pedido ${pedido} concluído.`
+        :`Pedido ${pedido} marcado para acompanhamento.`
+    );
+  }catch(error){
+    toast(error.message||"Não foi possível salvar o acompanhamento.");
+  }finally{
+    button.disabled=false;
+    button.textContent=originalText;
+  }
+}
+
+
 function compactOrderInfo(data,withStar=false,showOperationalStatuses=false){
   const pedido=normalizarCodigo(data.pedido);
   const tipoPedido=escapeHtml(data.tipoPedido||"—");
@@ -6953,6 +7173,7 @@ function compactOrderInfo(data,withStar=false,showOperationalStatuses=false){
         ${star}
         <strong>${pedido} / ${tipoPedido}</strong>
         ${copyOrderButton(pedido)}
+        ${managerFollowUpButton(pedido)}
       </div>
       ${compactCommercialInfo(data)}
       <div class="compact-meta"><span>Transporte:</span> ${transport}</div>
@@ -8360,6 +8581,29 @@ $("#receivingViewMode").onchange=()=>{
   renderReceivingDashboard();
 };
 $("#receivingPeriodFilter").onchange=renderReceivingDashboard;
+const managerFollowUpForm=$("#managerFollowUpForm");
+const managerFollowUpModal=$("#managerFollowUpModal");
+
+if(managerFollowUpForm){
+  managerFollowUpForm.onsubmit=saveManagerFollowUp;
+}
+
+if($("#closeManagerFollowUp")){
+  $("#closeManagerFollowUp").onclick=closeManagerFollowUp;
+}
+
+if($("#cancelManagerFollowUp")){
+  $("#cancelManagerFollowUp").onclick=closeManagerFollowUp;
+}
+
+if(managerFollowUpModal){
+  managerFollowUpModal.onclick=event=>{
+    if(event.target.id==="managerFollowUpModal"){
+      closeManagerFollowUp();
+    }
+  };
+}
+
 $("#receivingSupplierFilter").onchange=renderReceivingDashboard;
 $("#receivingStoreFilter").onchange=renderReceivingDashboard;
 $("#clearReceivingFilters").onclick=()=>{
