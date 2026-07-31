@@ -2870,7 +2870,7 @@ body.modal-open{overflow:hidden}
 
 
 /* =========================================================
-   V10.27 — FILTROS ORGANIZADOS POR GRUPOS
+   V10.28 — FILTROS ORGANIZADOS POR GRUPOS
    ========================================================= */
 
 #advancedFilters.advanced-filter-grid{
@@ -2989,7 +2989,7 @@ body.modal-open{overflow:hidden}
 }
 
 /* =========================================================
-   V10.27 — FILTROS MÚLTIPLOS INTEGRADOS
+   V10.28 — FILTROS MÚLTIPLOS INTEGRADOS
    ========================================================= */
 
 .advanced-toolbar{
@@ -3208,7 +3208,7 @@ body.modal-open{overflow:hidden}
 
 
 
-/* V10.27 — Pedido roteirizado */
+/* V10.28 — Pedido roteirizado */
 .routed-system-link{width:max-content;margin-top:4px;padding:0;border:0;background:transparent;color:#315f91;font-size:10px;font-weight:800;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .routed-system-link:hover,.routed-system-link:focus{color:#173e68;outline:none}
 .routed-order-badge{width:28px;height:28px;display:inline-grid;place-items:center;flex:0 0 auto;padding:0;border:1px solid #cfd9e5;border-radius:7px;background:#f5f9fd;font-size:14px;cursor:pointer}
@@ -3289,7 +3289,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.27 — Painel Meus acompanhamentos */
+/* V10.28 — Painel Meus acompanhamentos */
 .manager-dashboard-panel{
   margin-bottom:18px;
   padding:18px 20px;
@@ -3390,7 +3390,7 @@ body.modal-open{overflow:hidden}
   }
 }
 
-/* V10.27 — Acompanhamento do Gestor por pedido */
+/* V10.28 — Acompanhamento do Gestor por pedido */
 .manager-follow-up-btn{
   width:28px;
   height:28px;
@@ -3451,7 +3451,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.27 — Local atual do item em Pronta Entrega */
+/* V10.28 — Local atual do item em Pronta Entrega */
 .current-item-location{
   display:flex;
   flex-direction:column;
@@ -3472,7 +3472,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.27 — filtros de data de entrega e descrição do produto */
+/* V10.28 — filtros de data de entrega e descrição do produto */
 .management-filter-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(260px,1fr));
@@ -3539,7 +3539,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.27 — títulos permanentes nos filtros reais */
+/* V10.28 — títulos permanentes nos filtros reais */
 .advanced-filter{
   display:flex;
   flex-direction:column;
@@ -3562,7 +3562,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.27 — Previsão de Recebimento por OC */
+/* V10.28 — Previsão de Recebimento por OC */
 .receiving-dashboard{display:grid;gap:18px}
 .receiving-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
 .receiving-metric{appearance:none;min-width:0;padding:17px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:var(--shadow);color:var(--text);text-align:left}
@@ -3760,7 +3760,7 @@ body.modal-open{overflow:hidden}
 
 .forecast-call-toolbar{
   display:grid;
-  grid-template-columns:minmax(220px,1fr) minmax(180px,.65fr) auto auto;
+  grid-template-columns:minmax(220px,1fr) minmax(180px,.65fr) minmax(170px,.55fr) auto auto;
   align-items:end;
   gap:14px;
 }
@@ -3771,7 +3771,8 @@ body.modal-open{overflow:hidden}
   gap:7px;
 }
 
-.forecast-call-filter input{
+.forecast-call-filter input,
+.forecast-call-filter select{
   width:100%;
   min-height:42px;
   padding:9px 12px;
@@ -3822,6 +3823,26 @@ body.modal-open{overflow:hidden}
   .forecast-call-summary{
     grid-column:auto;
   }
+}
+
+
+.forecast-positioned-edit{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:5px;
+  font-size:10px;
+  font-weight:700;
+  color:#64748b;
+}
+
+.forecast-positioned-edit select{
+  min-height:28px;
+  padding:4px 6px;
+  border:1px solid #d7dde6;
+  border-radius:6px;
+  background:#fff;
+  font-size:10px;
 }
 
 </style>
@@ -3981,6 +4002,17 @@ body.modal-open{overflow:hidden}
                    inputmode="numeric"
                    placeholder="Digite o número do pedido..."
                    autocomplete="off" />
+          </div>
+
+          <div class="forecast-call-filter">
+            <span class="advanced-filter-label">
+              Posicionado sim ou não
+            </span>
+            <select id="forecastPositionedFilter">
+              <option value="">Todos</option>
+              <option value="Sim">Sim</option>
+              <option value="Não">Não</option>
+            </select>
           </div>
 
           <label class="forecast-overdue-filter">
@@ -7106,6 +7138,19 @@ function matchesForecastCallFilters(item){
     return false;
   }
 
+  const positionedFilter=String(
+    document.getElementById(
+      "forecastPositionedFilter"
+    )?.value||""
+  ).trim();
+
+  if(
+    positionedFilter &&
+    norm(item?.posicionadoSimOuNao||"")!==norm(positionedFilter)
+  ){
+    return false;
+  }
+
   const onlyOriginalOverdue=Boolean(
     document.getElementById(
       "forecastOriginalOverdueFilter"
@@ -7141,6 +7186,16 @@ function updateForecastCallSummary(count){
     descriptions.push("Pedido");
   }
 
+  const positionedFilter=String(
+    document.getElementById(
+      "forecastPositionedFilter"
+    )?.value||""
+  ).trim();
+
+  if(positionedFilter){
+    descriptions.push(`Posicionado: ${positionedFilter}`);
+  }
+
   if(
     document.getElementById(
       "forecastOriginalOverdueFilter"
@@ -7157,12 +7212,16 @@ function updateForecastCallSummary(count){
 function clearForecastCallFilters(){
   const client=document.getElementById("forecastClientFilter");
   const order=document.getElementById("forecastOrderFilter");
+  const positioned=document.getElementById(
+    "forecastPositionedFilter"
+  );
   const overdue=document.getElementById(
     "forecastOriginalOverdueFilter"
   );
 
   if(client)client.value="";
   if(order)order.value="";
+  if(positioned)positioned.value="";
   if(overdue)overdue.checked=false;
 
   resetOrdersPage();
@@ -9559,7 +9618,9 @@ function compactProductInfo(item,showDelayReason=false){
 function renderOrdersByItem(){
   const filteredItems=sortByAttitudeDate(
     getVisibleItems(),
-    item=>item.dataAtitudeSupervisao||""
+    item=>forecastCallMode
+      ?(item.dataAtitudePrevisao||"")
+      :(item.dataAtitudeSupervisao||"")
   );
 
   const pagination=paginateRows(filteredItems);
@@ -9586,21 +9647,47 @@ function renderOrdersByItem(){
           <td>${compactProductInfo(item,true)}</td>
           <td class="combined-status-cell">
             <div class="quick-edit-cell supervision-inline-cell combined-status-main"
-                 data-supervision-field="statusSupervisao"
+                 data-supervision-field="${forecastCallMode?"statusPrevisao":"statusSupervisao"}"
                  data-key="${escapeHtml(String(item.chaveItem||"").trim())}"
                  onclick="event.stopPropagation();startSupervisionInlineEdit(this)">
               <span class="inline-edit-trigger">
-                ${badge(item.statusSupervisao||"Sem acompanhamento")}
+                ${badge(
+                  forecastCallMode
+                    ?(item.statusPrevisao||"Sem acompanhamento")
+                    :(item.statusSupervisao||"Sem acompanhamento")
+                )}
               </span>
             </div>
             <div class="quick-edit-cell supervision-inline-cell combined-status-date"
-                 data-supervision-field="dataAtitudeSupervisao"
+                 data-supervision-field="${forecastCallMode?"dataAtitudePrevisao":"dataAtitudeSupervisao"}"
                  data-key="${escapeHtml(String(item.chaveItem||"").trim())}"
                  onclick="event.stopPropagation();startSupervisionInlineEdit(this)">
               <span class="inline-edit-trigger">
-                ${item.dataAtitudeSupervisao?fmtDate(item.dataAtitudeSupervisao):"Sem data"}
+                ${
+                  forecastCallMode
+                    ?(item.dataAtitudePrevisao?fmtDate(item.dataAtitudePrevisao):"Sem data")
+                    :(item.dataAtitudeSupervisao?fmtDate(item.dataAtitudeSupervisao):"Sem data")
+                }
               </span>
             </div>
+            ${forecastCallMode
+              ?`<div class="forecast-positioned-edit">
+                  <span>Posicionado:</span>
+                  <select data-forecast-positioned
+                          data-pedido="${escapeHtml(normalizarCodigo(item.pedido))}"
+                          onchange="event.stopPropagation();saveForecastPositioned(this)">
+                    <option value="">Selecione</option>
+                    <option value="Sim"
+                      ${norm(item.posicionadoSimOuNao)==="sim"?"selected":""}>
+                      Sim
+                    </option>
+                    <option value="Não"
+                      ${norm(item.posicionadoSimOuNao)==="nao"?"selected":""}>
+                      Não
+                    </option>
+                  </select>
+                </div>`
+              :""}
           </td>
         </tr>`);
     }catch(error){
@@ -9959,9 +10046,12 @@ async function saveDelayReasonChange(chaves){
 let pendingSupervisionChange=null;
 
 function supervisionFieldLabel(field){
-  return field==="statusSupervisao"
-    ?"Status Supervisão"
-    :"Data Atitude Supervisão";
+  return {
+    statusSupervisao:"Status Supervisão",
+    dataAtitudeSupervisao:"Data Atitude Supervisão",
+    statusPrevisao:"Status Previsão",
+    dataAtitudePrevisao:"Data Atitude Previsão"
+  }[field]||field;
 }
 
 function startSupervisionInlineEdit(cell){
@@ -9974,7 +10064,7 @@ function startSupervisionInlineEdit(cell){
 
   cell.classList.add("editing");
 
-  if(field==="statusSupervisao"){
+  if(field==="statusSupervisao"||field==="statusPrevisao"){
     const statuses=(state.statuses||[])
       .map(canonicalStatus)
       .filter(status=>status&&status!=="Sem acompanhamento")
@@ -9986,7 +10076,7 @@ function startSupervisionInlineEdit(cell){
           <option value="">Selecione...</option>
           ${statuses.map(status=>`
             <option value="${escapeHtml(status)}"
-              ${status===canonicalStatus(item.statusSupervisao)?"selected":""}>
+              ${status===canonicalStatus(field==="statusPrevisao"?item.statusPrevisao:item.statusSupervisao)?"selected":""}>
               ${escapeHtml(status)}
             </option>`).join("")}
         </select>
@@ -9998,7 +10088,7 @@ function startSupervisionInlineEdit(cell){
       <div class="inline-edit" onclick="event.stopPropagation()">
         <input class="inline-date" data-supervision-input type="date"
                min="${todayIsoLocal()}"
-               value="${item.dataAtitudeSupervisao||""}">
+               value="${field==="dataAtitudePrevisao"?(item.dataAtitudePrevisao||""):(item.dataAtitudeSupervisao||"")}">
         <button class="inline-save" type="button">✓</button>
         <button class="inline-cancel" type="button">×</button>
       </div>`;
@@ -10008,12 +10098,12 @@ function startSupervisionInlineEdit(cell){
   cell.querySelector(".inline-save").onclick=()=>{
     const value=input.value;
 
-    if(field==="statusSupervisao"&&!value){
+    if((field==="statusSupervisao"||field==="statusPrevisao")&&!value){
       toast("Selecione o Status Supervisão.");
       return;
     }
 
-    if(field==="dataAtitudeSupervisao"&&!validateAttitudeDate(value)){
+    if((field==="dataAtitudeSupervisao"||field==="dataAtitudePrevisao")&&!validateAttitudeDate(value)){
       return;
     }
 
@@ -10025,7 +10115,7 @@ function startSupervisionInlineEdit(cell){
     };
 
     $("#supervisionScopeDescription").textContent=
-      `${supervisionFieldLabel(field)}: ${field==="dataAtitudeSupervisao"?(value?fmtDate(value):"Em branco"):value}`;
+      `${supervisionFieldLabel(field)}: ${(field==="dataAtitudeSupervisao"||field==="dataAtitudePrevisao")?(value?fmtDate(value):"Em branco"):value}`;
 
     $("#supervisionScopeModal").classList.add("open");
   };
@@ -10051,7 +10141,10 @@ function openSupervisionItemsSelection(){
   $("#supervisionPedido").textContent=pendingSupervisionChange.pedido;
   $("#supervisionSelectedValue").textContent=
     `${supervisionFieldLabel(pendingSupervisionChange.campo)}: ${
-      pendingSupervisionChange.campo==="dataAtitudeSupervisao"
+      (
+        pendingSupervisionChange.campo==="dataAtitudeSupervisao"||
+        pendingSupervisionChange.campo==="dataAtitudePrevisao"
+      )
         ?(pendingSupervisionChange.valor?fmtDate(pendingSupervisionChange.valor):"Em branco")
         :pendingSupervisionChange.valor
     }`;
@@ -10067,8 +10160,16 @@ function openSupervisionItemsSelection(){
                    value="${escapeHtml(key)}" ${checked}></td>
         <td>${compactProductInfo(item)}</td>
         <td>${badge(canonicalCategory(item.categoria)||"Sem categoria")}</td>
-        <td>${badge(item.statusSupervisao||"Sem acompanhamento")}</td>
-        <td>${item.dataAtitudeSupervisao?fmtDate(item.dataAtitudeSupervisao):"—"}</td>
+        <td>${badge(
+          pendingSupervisionChange.campo.includes("Previsao")
+            ?(item.statusPrevisao||"Sem acompanhamento")
+            :(item.statusSupervisao||"Sem acompanhamento")
+        )}</td>
+        <td>${
+          pendingSupervisionChange.campo.includes("Previsao")
+            ?(item.dataAtitudePrevisao?fmtDate(item.dataAtitudePrevisao):"—")
+            :(item.dataAtitudeSupervisao?fmtDate(item.dataAtitudeSupervisao):"—")
+        }</td>
       </tr>`;
   }).join("");
 
@@ -10092,7 +10193,9 @@ async function saveSupervisionChange(chaves){
     return {
       key,
       statusSupervisao:item?.statusSupervisao||"",
-      dataAtitudeSupervisao:item?.dataAtitudeSupervisao||""
+      dataAtitudeSupervisao:item?.dataAtitudeSupervisao||"",
+      statusPrevisao:item?.statusPrevisao||"",
+      dataAtitudePrevisao:item?.dataAtitudePrevisao||""
     };
   });
 
@@ -10102,8 +10205,12 @@ async function saveSupervisionChange(chaves){
 
     if(change.campo==="statusSupervisao"){
       item.statusSupervisao=change.valor;
-    }else{
+    }else if(change.campo==="dataAtitudeSupervisao"){
       item.dataAtitudeSupervisao=change.valor||"";
+    }else if(change.campo==="statusPrevisao"){
+      item.statusPrevisao=change.valor;
+    }else if(change.campo==="dataAtitudePrevisao"){
+      item.dataAtitudePrevisao=change.valor||"";
     }
   });
 
@@ -10133,12 +10240,69 @@ async function saveSupervisionChange(chaves){
       if(!item)return;
       item.statusSupervisao=old.statusSupervisao;
       item.dataAtitudeSupervisao=old.dataAtitudeSupervisao;
+      item.statusPrevisao=old.statusPrevisao;
+      item.dataAtitudePrevisao=old.dataAtitudePrevisao;
     });
 
     renderOrders();
     toast(error.message||"Não foi possível salvar a Supervisão.");
   }
 }
+
+
+async function saveForecastPositioned(select){
+  const pedido=normalizarCodigo(select?.dataset?.pedido||"");
+  const valor=String(select?.value||"").trim();
+
+  if(!pedido||!valor){
+    return;
+  }
+
+  const previous=state.orders
+    .filter(item=>
+      normalizarCodigo(item.pedido)===pedido &&
+      canonicalCategory(item.categoria)==="Previsão"
+    )
+    .map(item=>({
+      chave:String(item.chaveItem||"").trim(),
+      valor:item.posicionadoSimOuNao||""
+    }));
+
+  previous.forEach(old=>{
+    const item=getItemByKey(old.chave);
+    if(item)item.posicionadoSimOuNao=valor;
+  });
+
+  renderOrders();
+  toast("Salvando Posicionado...");
+
+  try{
+    const response=await api("savePositioned",{
+      positionedUpdate:{
+        pedido,
+        valor
+      }
+    });
+
+    if(response&&response.error){
+      throw new Error(response.error);
+    }
+
+    toast(`Posicionado atualizado para ${valor}.`);
+  }catch(error){
+    previous.forEach(old=>{
+      const item=getItemByKey(old.chave);
+      if(item)item.posicionadoSimOuNao=old.valor;
+    });
+
+    renderOrders();
+    toast(
+      error?.message||
+      "Não foi possível salvar Posicionado."
+    );
+  }
+}
+
 
 function getItemByKey(chaveItem){
   return state.orders.find(item=>
@@ -10581,6 +10745,20 @@ function switchView(view){
     });
   }
 });
+
+const forecastPositionedFilter=document.getElementById(
+  "forecastPositionedFilter"
+);
+
+if(forecastPositionedFilter){
+  forecastPositionedFilter.addEventListener(
+    "change",
+    ()=>{
+      resetOrdersPage();
+      renderOrders();
+    }
+  );
+}
 
 const forecastOriginalOverdueFilter=document.getElementById(
   "forecastOriginalOverdueFilter"
