@@ -2870,7 +2870,7 @@ body.modal-open{overflow:hidden}
 
 
 /* =========================================================
-   V10.28 — FILTROS ORGANIZADOS POR GRUPOS
+   V10.30 — FILTROS ORGANIZADOS POR GRUPOS
    ========================================================= */
 
 #advancedFilters.advanced-filter-grid{
@@ -2989,7 +2989,7 @@ body.modal-open{overflow:hidden}
 }
 
 /* =========================================================
-   V10.28 — FILTROS MÚLTIPLOS INTEGRADOS
+   V10.30 — FILTROS MÚLTIPLOS INTEGRADOS
    ========================================================= */
 
 .advanced-toolbar{
@@ -3208,7 +3208,7 @@ body.modal-open{overflow:hidden}
 
 
 
-/* V10.28 — Pedido roteirizado */
+/* V10.30 — Pedido roteirizado */
 .routed-system-link{width:max-content;margin-top:4px;padding:0;border:0;background:transparent;color:#315f91;font-size:10px;font-weight:800;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .routed-system-link:hover,.routed-system-link:focus{color:#173e68;outline:none}
 .routed-order-badge{width:28px;height:28px;display:inline-grid;place-items:center;flex:0 0 auto;padding:0;border:1px solid #cfd9e5;border-radius:7px;background:#f5f9fd;font-size:14px;cursor:pointer}
@@ -3289,7 +3289,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.28 — Painel Meus acompanhamentos */
+/* V10.30 — Painel Meus acompanhamentos */
 .manager-dashboard-panel{
   margin-bottom:18px;
   padding:18px 20px;
@@ -3390,7 +3390,7 @@ body.modal-open{overflow:hidden}
   }
 }
 
-/* V10.28 — Acompanhamento do Gestor por pedido */
+/* V10.30 — Acompanhamento do Gestor por pedido */
 .manager-follow-up-btn{
   width:28px;
   height:28px;
@@ -3451,7 +3451,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.28 — Local atual do item em Pronta Entrega */
+/* V10.30 — Local atual do item em Pronta Entrega */
 .current-item-location{
   display:flex;
   flex-direction:column;
@@ -3472,7 +3472,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.28 — filtros de data de entrega e descrição do produto */
+/* V10.30 — filtros de data de entrega e descrição do produto */
 .management-filter-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(260px,1fr));
@@ -3539,7 +3539,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.28 — títulos permanentes nos filtros reais */
+/* V10.30 — títulos permanentes nos filtros reais */
 .advanced-filter{
   display:flex;
   flex-direction:column;
@@ -3562,7 +3562,7 @@ body.modal-open{overflow:hidden}
 }
 
 
-/* V10.28 — Previsão de Recebimento por OC */
+/* V10.30 — Previsão de Recebimento por OC */
 .receiving-dashboard{display:grid;gap:18px}
 .receiving-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
 .receiving-metric{appearance:none;min-width:0;padding:17px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:var(--shadow);color:var(--text);text-align:left}
@@ -10231,7 +10231,33 @@ async function saveSupervisionChange(chaves){
       });
 
       if(response&&response.error)throw new Error(response.error);
+
+      const campoConfirmado=String(response?.campo||change.campo);
+      const valorConfirmado=
+        response&&Object.prototype.hasOwnProperty.call(response,"valor")
+          ?response.valor
+          :change.valor;
+
+      uniqueKeys.forEach(key=>{
+        const item=getItemByKey(key);
+        if(!item)return;
+
+        if(campoConfirmado==="statusSupervisao"){
+          item.statusSupervisao=valorConfirmado||"";
+        }else if(campoConfirmado==="dataAtitudeSupervisao"){
+          item.dataAtitudeSupervisao=valorConfirmado||"";
+        }else if(campoConfirmado==="statusPrevisao"){
+          item.statusPrevisao=valorConfirmado||"";
+        }else if(campoConfirmado==="dataAtitudePrevisao"){
+          item.dataAtitudePrevisao=valorConfirmado||"";
+        }
+      });
     }
+
+    // Redesenha novamente após a confirmação do backend.
+    // Isso garante que a data/status exibidos reflitam imediatamente
+    // o valor efetivamente salvo, sem precisar atualizar a página.
+    renderOrders();
 
     toast(`${supervisionFieldLabel(change.campo)} atualizado em ${uniqueKeys.length} item(ns).`);
   }catch(error){
